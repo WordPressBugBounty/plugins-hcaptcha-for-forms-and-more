@@ -60,6 +60,7 @@ return array(
     'HCaptcha\\EasyDigitalDownloads\\Register' => $baseDir . '/src/php/EasyDigitalDownloads/Register.php',
     'HCaptcha\\ElementorPro\\HCaptchaHandler' => $baseDir . '/src/php/ElementorPro/HCaptchaHandler.php',
     'HCaptcha\\ElementorPro\\Login' => $baseDir . '/src/php/ElementorPro/Login.php',
+    'HCaptcha\\ErrorHandler' => $baseDir . '/src/php/ErrorHandler.php',
     'HCaptcha\\EssentialAddons\\Base' => $baseDir . '/src/php/EssentialAddons/Base.php',
     'HCaptcha\\EssentialAddons\\Login' => $baseDir . '/src/php/EssentialAddons/Login.php',
     'HCaptcha\\EssentialAddons\\Register' => $baseDir . '/src/php/EssentialAddons/Register.php',

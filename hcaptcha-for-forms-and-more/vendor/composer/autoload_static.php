@@ -88,6 +88,7 @@ class ComposerStaticInit02b6959c9a88d67618a6c0c1eb5fcc5f
         'HCaptcha\\EasyDigitalDownloads\\Register' => __DIR__ . '/../..' . '/src/php/EasyDigitalDownloads/Register.php',
         'HCaptcha\\ElementorPro\\HCaptchaHandler' => __DIR__ . '/../..' . '/src/php/ElementorPro/HCaptchaHandler.php',
         'HCaptcha\\ElementorPro\\Login' => __DIR__ . '/../..' . '/src/php/ElementorPro/Login.php',
+        'HCaptcha\\ErrorHandler' => __DIR__ . '/../..' . '/src/php/ErrorHandler.php',
         'HCaptcha\\EssentialAddons\\Base' => __DIR__ . '/../..' . '/src/php/EssentialAddons/Base.php',
         'HCaptcha\\EssentialAddons\\Login' => __DIR__ . '/../..' . '/src/php/EssentialAddons/Login.php',
         'HCaptcha\\EssentialAddons\\Register' => __DIR__ . '/../..' . '/src/php/EssentialAddons/Register.php',
