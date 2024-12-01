@@ -93,6 +93,7 @@ return array(
     'HCaptcha\\MailPoet\\Form' => $baseDir . '/src/php/MailPoet/Form.php',
     'HCaptcha\\Mailchimp\\Form' => $baseDir . '/src/php/Mailchimp/Form.php',
     'HCaptcha\\Main' => $baseDir . '/src/php/Main.php',
+    'HCaptcha\\Maintenance\\Login' => $baseDir . '/src/php/Maintenance/Login.php',
     'HCaptcha\\MemberPress\\Login' => $baseDir . '/src/php/MemberPress/Login.php',
     'HCaptcha\\MemberPress\\Register' => $baseDir . '/src/php/MemberPress/Register.php',
     'HCaptcha\\Migrations\\Migrations' => $baseDir . '/src/php/Migrations/Migrations.php',

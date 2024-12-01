@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit02b6959c9a88d67618a6c0c1eb5fcc5f
+class ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84
 {
     public static $prefixLengthsPsr4 = array (
         'K' => 
@@ -121,6 +121,7 @@ class ComposerStaticInit02b6959c9a88d67618a6c0c1eb5fcc5f
         'HCaptcha\\MailPoet\\Form' => __DIR__ . '/../..' . '/src/php/MailPoet/Form.php',
         'HCaptcha\\Mailchimp\\Form' => __DIR__ . '/../..' . '/src/php/Mailchimp/Form.php',
         'HCaptcha\\Main' => __DIR__ . '/../..' . '/src/php/Main.php',
+        'HCaptcha\\Maintenance\\Login' => __DIR__ . '/../..' . '/src/php/Maintenance/Login.php',
         'HCaptcha\\MemberPress\\Login' => __DIR__ . '/../..' . '/src/php/MemberPress/Login.php',
         'HCaptcha\\MemberPress\\Register' => __DIR__ . '/../..' . '/src/php/MemberPress/Register.php',
         'HCaptcha\\Migrations\\Migrations' => __DIR__ . '/../..' . '/src/php/Migrations/Migrations.php',
@@ -203,9 +204,9 @@ class ComposerStaticInit02b6959c9a88d67618a6c0c1eb5fcc5f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit02b6959c9a88d67618a6c0c1eb5fcc5f::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit02b6959c9a88d67618a6c0c1eb5fcc5f::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit02b6959c9a88d67618a6c0c1eb5fcc5f::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84::$classMap;
 
         }, null, ClassLoader::class);
     }
