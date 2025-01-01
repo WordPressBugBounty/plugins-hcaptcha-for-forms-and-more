@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84
+class ComposerStaticInit0c3f450f81223af0ef151675e6b814b7
 {
     public static $prefixLengthsPsr4 = array (
         'K' => 
@@ -116,6 +116,9 @@ class ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84
         'HCaptcha\\LearnDash\\Login' => __DIR__ . '/../..' . '/src/php/LearnDash/Login.php',
         'HCaptcha\\LearnDash\\LostPassword' => __DIR__ . '/../..' . '/src/php/LearnDash/LostPassword.php',
         'HCaptcha\\LearnDash\\Register' => __DIR__ . '/../..' . '/src/php/LearnDash/Register.php',
+        'HCaptcha\\LearnPress\\Checkout' => __DIR__ . '/../..' . '/src/php/LearnPress/Checkout.php',
+        'HCaptcha\\LearnPress\\Login' => __DIR__ . '/../..' . '/src/php/LearnPress/Login.php',
+        'HCaptcha\\LearnPress\\Register' => __DIR__ . '/../..' . '/src/php/LearnPress/Register.php',
         'HCaptcha\\LoginSignupPopup\\Login' => __DIR__ . '/../..' . '/src/php/LoginSignupPopup/Login.php',
         'HCaptcha\\LoginSignupPopup\\Register' => __DIR__ . '/../..' . '/src/php/LoginSignupPopup/Register.php',
         'HCaptcha\\MailPoet\\Form' => __DIR__ . '/../..' . '/src/php/MailPoet/Form.php',
@@ -158,6 +161,10 @@ class ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84
         'HCaptcha\\ThemeMyLogin\\Login' => __DIR__ . '/../..' . '/src/php/ThemeMyLogin/Login.php',
         'HCaptcha\\ThemeMyLogin\\LostPassword' => __DIR__ . '/../..' . '/src/php/ThemeMyLogin/LostPassword.php',
         'HCaptcha\\ThemeMyLogin\\Register' => __DIR__ . '/../..' . '/src/php/ThemeMyLogin/Register.php',
+        'HCaptcha\\Tutor\\Checkout' => __DIR__ . '/../..' . '/src/php/Tutor/Checkout.php',
+        'HCaptcha\\Tutor\\Login' => __DIR__ . '/../..' . '/src/php/Tutor/Login.php',
+        'HCaptcha\\Tutor\\LostPassword' => __DIR__ . '/../..' . '/src/php/Tutor/LostPassword.php',
+        'HCaptcha\\Tutor\\Register' => __DIR__ . '/../..' . '/src/php/Tutor/Register.php',
         'HCaptcha\\UM\\Base' => __DIR__ . '/../..' . '/src/php/UM/Base.php',
         'HCaptcha\\UM\\Login' => __DIR__ . '/../..' . '/src/php/UM/Login.php',
         'HCaptcha\\UM\\LostPassword' => __DIR__ . '/../..' . '/src/php/UM/LostPassword.php',
@@ -204,9 +211,9 @@ class ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitf80b1a375e08b3e8c020f875aa43be84::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit0c3f450f81223af0ef151675e6b814b7::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit0c3f450f81223af0ef151675e6b814b7::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit0c3f450f81223af0ef151675e6b814b7::$classMap;
 
         }, null, ClassLoader::class);
     }
