@@ -1,10 +1,10 @@
 === hCaptcha for WP ===
 Contributors: hcaptcha, kaggdesign
 Tags: captcha, hcaptcha, antispam, abuse, protect
-Requires at least: 5.3
-Tested up to: 6.8
-Requires PHP: 7.2
-Stable tag: 4.18.0
+Requires at least: 6.0
+Tested up to: 6.9
+Requires PHP: 7.4
+Stable tag: 4.22.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,13 +26,14 @@ hCaptcha for WP [makes security easy](https://www.hcaptcha.com/integration-hcapt
 * **Privacy First:** hCaptcha is designed to protect user privacy. It doesn't retain or sell personal data, unlike platforms that **g**ather, **o**wn, and m**o**netize **gl**obal b**e**havior.
 * **Better Security:** hCaptcha offers better protection against bots and abuse than other anti-abuse systems.
 * **Easy to Use:** hCaptcha is easy to install and use with WordPress and popular plugins.
-* **Broad Integration:** hCaptcha works with WordPress Core, WooCommerce, Contact Form 7, Elementor, and over 50 other plugins and themes.
+* **Broad Integration:** hCaptcha works with WordPress Core, WooCommerce, Contact Form 7, Elementor, and over 60 other plugins and themes.
 
 == Features ==
 
 **Highlights**
 
 * **Detailed Analytics:** Get detailed analytics on hCaptcha events and form submissions.
+* **AI-Ready Security:** Selected security actions are exposed via the WordPress Abilities API for automation and AI-driven workflows.
 * **Pro and Enterprise:** Supports Pro and Enterprise versions of hCaptcha.
 * **No Challenge Modes:** 99.9% passive and passive modes in Pro and Enterprise versions reduce user friction.
 * **Protect Site Content:** Protects selected site URLs from bots with hCaptcha. Works best with Pro 99.9% passive mode.
@@ -106,6 +107,98 @@ For non-standard cases, you can use the `[hcaptcha]` shortcode provided by the p
 For example, we support Contact Forms 7 automatically. However, sometimes a theme can modify the form. In this case, you can manually add the `[cf7-hcaptcha]` shortcode to the CF7 form.
 
 To make hCaptcha work, the shortcode must be inside the <form ...> ... </form> tag.
+
+= How do I use the new AI / Abilities features? =
+
+hCaptcha exposes selected security actions via the WordPress Abilities API for use with automation tools, WP-CLI, and AI agents, making it suitable for agencies managing multiple WordPress sites. Requires WordPress 6.9 or newer.
+
+The typical workflow consists of two steps: inspect threats and block offenders.
+
+** 1. Inspect recent threat activity **
+
+You can request an aggregated threat snapshot for a given time window.
+
+Using WP-CLI:
+
+`
+wp ability run hcaptcha/get-threat-snapshot --input='{"window":"55d"}' --user=admin
+`
+
+Using REST API (authenticated):
+
+`
+curl --globoff -u "USER:APP_PASSWORD" \
+"https://example.com/wp-json/wp-abilities/v1/abilities/hcaptcha/get-threat-snapshot/run?input[window]=55d"
+`
+
+The response includes:
+* overall metrics (total requests, failure rate)
+* dominant attack signals
+* breakdown by error type and form source
+* a list of top offenders (if present)
+
+Example (simplified):
+`
+{
+  "metrics": { "total": 353, "failed": 215 },
+  "signals": { "attack_likelihood": "high" },
+  "breakdown": {
+    "errors": { "empty": 160, "spam": 16 },
+    "offenders": [
+      {
+        "offender_id": "a1376a016c4156933c4d49b0bc56fa01",
+        "type": "ip",
+        "count": 2
+      }
+    ]
+  }
+}
+`
+
+** 2. Block abusive offenders **
+
+If an offender appears suspicious, you can block it using its offender_id.
+
+Using WP-CLI:
+
+`
+wp ability run hcaptcha/block-offenders \
+--input='{"offender_ids":["a1376a016c4156933c4d49b0bc56fa01"]}' \
+--user=admin
+`
+
+Using REST API (authenticated):
+`
+curl --globoff -u "USER:APP_PASSWORD" \
+"https://example.com/wp-json/wp-abilities/v1/abilities/hcaptcha/block-offenders/run?input[offender_ids][]=a1376a016c4156933c4d49b0bc56fa01"
+`
+
+Example response:
+
+`
+{
+  "blocked": ["a1376a016c4156933c4d49b0bc56fa01"],
+  "effective_until": "2026-01-01T22:22:09Z"
+}
+`
+
+** What is offender_id? **
+
+`offender_id` is a stable hash of the IP address.
+Raw IP addresses are never exposed to automation clients or AI agents.
+
+This allows privacy-safe analysis and blocking, while still enabling deterministic enforcement.
+
+** Can AI agents use this automatically? **
+
+Yes.
+You can point an AI agent to a WordPress site with Abilities enabled and instruct it to:
+* discover available abilities
+* collect threat statistics
+* decide whether activity looks abusive
+* block the most active offenders
+
+Internally, the agent performs the same commands shown above (`wp ability list`, `get-threat-snapshot`, `block-offenders`).
 
 = You don't support plugin X. How can I get support for it added? =
 
@@ -626,9 +719,9 @@ add_filter( 'hcap_settings_init_args', 'hcap_settings_init_args_filter' );
 `parent`: a string — the parent menu item. Default '' for 'pages' mode and 'options-general.php' for 'tabs' mode;
 `position`: a number — the position of the menu item. Default 58.990225 for 'pages' mode. It Has no effect on 'tabs' mode;
 
-= How can I report security bugs? =
+= Where do I report security bugs found in this plugin? =
 
-You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team helps validate, triage and handle any security vulnerabilities. [Report a security vulnerability.](https://patchstack.com/database/wordpress/plugin/hcaptcha-for-forms-and-more/vdp)
+Please report security bugs found in the source code of the undefined plugin through the [Patchstack Vulnerability Disclosure  Program](https://patchstack.com/database/vdp/59a09f24-9828-4304-aa15-727e12737b54). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 = Where can I get more information about hCaptcha? =
 
@@ -657,12 +750,12 @@ For more details, please see the hCaptcha privacy policy at:
 If you enable the optional plugin-local statistics feature, the following additional data will be recorded in your database:
 
 * counts of challenge verifications per form
-* **only if you enable this optional feature: **the IP address challenged on each form
-* **only if you enable this optional feature: **the USer Agent challenged on each form
-
-You can collect data anonymously but still distinguish sources. The hashed IP address and User Agent will be saved.
+* **only if you enable this optional feature:** the IP address challenged on each form
+* **only if you enable this optional feature:** the User Agent challenged on each form
 
 We recommend leaving IP and User Agent recording off, which will make these statistics fully anonymous.
+
+You can collect data anonymously but still distinguish sources. The hashed IP address and User Agent will be saved.
 
 If this feature is enabled, anonymized statistics on your plugin configuration, not including any end user data, will also be sent to us. This lets us see which modules and features are being used and prioritize development for them accordingly.
 
@@ -758,6 +851,64 @@ Instructions for popular native integrations are below:
 * [WPForms native integration: instructions to enable hCaptcha](https://wpforms.com/docs/how-to-set-up-and-use-hcaptcha-in-wpforms)
 
 == Changelog ==
+
+= 4.22.0 =
+* The minimum required PHP version is now 7.4.
+* The minimum required WordPress version is now 6.0.
+* Added support of 1Password on the General page. 
+* Fixed an issue where third-party plugins calling WordPress core functions incorrectly could break What's New admin scripts and styles.
+* Fixed LearDash Login form.
+
+= 4.21.1 =
+* Fixed hCaptcha not loading on Contact Form 7.
+
+= 4.21.0 =
+* Added AI-ready security actions via the WordPress Abilities API, enabling automated threat inspection and response.
+* Added compatibility with the latest version of the Ninja Forms plugin.
+* Fixed FluentForms integrations after the latest FluentForms update.
+* Fixed the inability to send FluentForms Conversational Form.
+* Fixed the racing condition which sometimes led to double rendering of the hCaptcha widget on any forms.
+* Fixed double rendering of the hCaptcha widget on the Elementor Form.
+* Fixed an error activating a free plugin when its premium version is not available.
+* Fixed highlighting of the suggested plugin when it is already activated.
+* Fixed an attempt for installation of an already installed plugin.
+* Fixed installing plugins declared as WordPress dependencies.
+* Fixed Jetpack test form appearance on the Playground.
+
+= 4.20.0 =
+* Added Divi 5 support.
+* Added onboarding wizard.
+* Added a dynamic Playground menu update after activating and deactivating of plugins and themes.
+* Added support for the Essential Addons for Elementor Pro plugin.
+* Added the ability to show What's New info for any version with the 'whats_new' GET parameter.
+* Fixed "[hCaptcha] should not render before js api is fully loaded" warning on the General page.
+* Fixed race condition when loading JavaScript on Playground.
+* Fixed console errors with Divi Contact Form.
+* Fixed the placeholder layout following hCaptcha layout changes.
+* Fixed the empty hCaptcha error on the WooCommerce Checkout page when honeypot is off.
+* Fixed multiple hCaptcha widgets on the Mailchimp form preview.
+* Fixed hCaptcha What's New layout.
+* Fixed error messaging in Jetpack forms.
+
+= 4.19.0 =
+* Added Elementor Safe Mode information to the System Info admin page.
+* Added Patchstack security program support.
+* Added support for WP Multisite Signup form.
+* Added support for a Theme My Login Multisite Signup form.
+* Added test mode by default on the first installation.
+* Improved a page speed load via passive event listeners.
+* Improved the notification message on the placeholder when hCaptcha is not loaded.
+* Fixed the delay showing hCaptcha when a WP Login form is protected.
+* Fixed the delay showing hCaptcha when a Colorlib Customizer Login form is protected.
+* Fixed the delay showing hCaptcha when an Easy Digital Download Login form is protected.
+* Fixed Ajax requests on admin pages with WP Playground.
+* Fixed the JS error on Forms and Events admin pages with empty data.
+* Fixed a fatal error when only Elementor is installed without Pro.
+* Fixed 'Bad hCaptcha nonce' error with a direct `/wp-login.php?action=postpass` request.
+* Fixed plugin activation on the Integrations page, executing activation hooks.
+* Fixed detection of the editor pages when hCaptcha is disabled for logged-in users.
+* Fixed Elementor Pro Form with default hCaptcha settings.
+* Fixed the zero size of the placeholder with default settings.
 
 = 4.18.0 =
 * Added honeypot and minimum submit time support for Blocksy, Brevo, CoBlocks, Contact Form 7 Live Form, Download Manager, Essential Blocks, Fluent Forms, Formidable Forms, Forminator, GiveWP Form, Gravity Forms, Kadence, MailPoet, Otter, Password Protected, Ultimate Addons for Elementor, and Wordfence.

@@ -1,6 +1,6 @@
 <?php
 /**
- * Checkout class file.
+ * The Checkout class file.
  *
  * @package hcaptcha-wp
  */
@@ -79,7 +79,9 @@ class Checkout {
 			return;
 		}
 
+		// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		$pmpro_msg  = $error_message;
 		$pmpro_msgt = 'pmpro_error';
+		// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	}
 }

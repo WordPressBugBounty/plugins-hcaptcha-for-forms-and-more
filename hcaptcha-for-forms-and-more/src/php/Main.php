@@ -13,6 +13,7 @@
 namespace HCaptcha;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use HCaptcha\Abilities\Abilities;
 use HCaptcha\Admin\Events\Events;
 use HCaptcha\Admin\PluginStats;
 use HCaptcha\Admin\Privacy;
@@ -31,6 +32,7 @@ use HCaptcha\EventsManager\Booking;
 use HCaptcha\Helpers\FormSubmitTime;
 use HCaptcha\Helpers\HCaptcha;
 use HCaptcha\Helpers\Pages;
+use HCaptcha\Helpers\Playground;
 use HCaptcha\Helpers\Request;
 use HCaptcha\Migrations\Migrations;
 use HCaptcha\NF\NF;
@@ -78,14 +80,14 @@ class Main {
 	/**
 	 * Priority of the plugins_loaded action to load Main.
 	 */
-	public const LOAD_PRIORITY = Migrations::LOAD_PRIORITY + 1;
+	public const LOAD_PRIORITY = Migrations::LOAD_PRIORITY + 10;
 
 	/**
 	 * Form shown somewhere, use this flag to run the script.
 	 *
 	 * @var boolean
 	 */
-	public $form_shown = false;
+	public bool $form_shown = false;
 
 	/**
 	 * We have the verification result of the hCaptcha widget.
@@ -93,56 +95,56 @@ class Main {
 	 *
 	 * @var boolean
 	 */
-	public $has_result = false;
+	public bool $has_result = false;
 
 	/**
 	 * Plugin modules.
 	 *
 	 * @var array
 	 */
-	public $modules = [];
+	public array $modules = [];
 
 	/**
 	 * Loaded integration-related classes.
 	 *
 	 * @var array
 	 */
-	protected $loaded_classes = [];
-
-	/**
-	 * Migrations' class instance.
-	 *
-	 * @var Migrations
-	 */
-	protected $migrations;
+	protected array $loaded_classes = [];
 
 	/**
 	 * Settings class instance.
 	 *
 	 * @var Settings
 	 */
-	protected $settings;
+	protected Settings $settings;
 
 	/**
 	 * Instance of AutoVerify.
 	 *
-	 * @var AutoVerify
+	 * @var AutoVerify|null
 	 */
-	protected $auto_verify;
+	protected ?AutoVerify $auto_verify = null;
 
 	/**
 	 * Instance of ProtectContent.
 	 *
 	 * @var ProtectContent
 	 */
-	protected $protect_content;
+	protected ProtectContent $protect_content;
 
 	/**
 	 * Whether hCaptcha is active.
 	 *
 	 * @var bool
 	 */
-	private $active;
+	private bool $active;
+
+	/**
+	 * Supported forms.
+	 *
+	 * @var ?array $supported_forms
+	 */
+	private ?array $supported_forms = null;
 
 	/**
 	 * Init class.
@@ -156,7 +158,8 @@ class Main {
 			// @codeCoverageIgnoreEnd
 		}
 
-		$this->migrations = new Migrations();
+		$this->load( Migrations::class );
+		$this->load( Playground::class );
 
 		( new Fix() )->init();
 
@@ -205,8 +208,9 @@ class Main {
 		$this->load( Events::class );
 		$this->load( Privacy::class );
 		$this->load( WhatsNew::class );
+		$this->load( Abilities::class );
 
-		add_action( 'plugins_loaded', [ $this, 'load_modules' ], self::LOAD_PRIORITY + 1 );
+		add_action( 'plugins_loaded', [ $this, 'load_modules' ], self::LOAD_PRIORITY + 10 );
 		add_filter( 'hcap_blacklist_ip', [ $this, 'denylist_ip' ], -PHP_INT_MAX, 2 );
 		add_filter( 'hcap_whitelist_ip', [ $this, 'allowlist_ip' ], -PHP_INT_MAX, 2 );
 		add_action( 'before_woocommerce_init', [ $this, 'declare_wc_compatibility' ] );
@@ -223,7 +227,7 @@ class Main {
 		add_action( 'login_head', [ $this, 'print_inline_styles' ] );
 		add_action( 'login_head', [ $this, 'login_head' ] );
 		add_action( 'wp_print_footer_scripts', [ $this, 'print_footer_scripts' ], 0 );
-		add_action( 'hcap_protect_form', [ $this, 'allow_honeypot_and_fst' ], 10, 3 );
+		add_filter( 'hcap_protect_form', [ $this, 'allow_honeypot_and_fst' ], 10, 3 );
 
 		$this->auto_verify = new AutoVerify();
 		$this->auto_verify->init();
@@ -275,7 +279,7 @@ class Main {
 		 * Do not load hCaptcha functionality:
 		 * - if a user is logged in and the option 'off_when_logged_in' is set;
 		 * - for allowlisted IPs;
-		 * - when the site key or the secret key is empty (after first plugin activation).
+		 * - when the site key or the secret key is empty (after the first plugin activation).
 		 */
 		$deactivate = (
 			( is_user_logged_in() && $settings->is_on( 'off_when_logged_in' ) ) ||
@@ -325,7 +329,7 @@ class Main {
 
 				if (
 					! method_exists( Pages::class, $method ) ||
-					! $settings->is_on( $component . '_status' )
+					empty( $settings->get( $component . '_status' ) )
 				) {
 					return $carry;
 				}
@@ -481,7 +485,11 @@ class Main {
 		$div_logo_url       = HCAPTCHA_URL . '/assets/images/hcaptcha-div-logo.svg';
 		$div_logo_white_url = HCAPTCHA_URL . '/assets/images/hcaptcha-div-logo-white.svg';
 		$bg                 = $settings->get_custom_theme_background() ?: 'initial';
-		$load_fail_msg      = __( 'If you see this message, hCaptcha failed to load due to site errors.', 'hcaptcha-for-forms-and-more' );
+		$delay              = (int) $settings->get( 'delay' );
+		$animation_delay    = $delay >= 0 ? $delay / 100 + 2 : 2;
+		$load_msg           = $delay >= 0
+			? __( 'If you see this message, hCaptcha failed to load due to site errors.', 'hcaptcha-for-forms-and-more' )
+			: __( 'The hCaptcha loading is delayed until user interaction.', 'hcaptcha-for-forms-and-more' );
 
 		/* language=CSS */
 		$css = '
@@ -494,13 +502,13 @@ class Main {
 	}
 
 	.h-captcha[data-size="normal"] {
-		width: 303px;
-		height: 78px;
+		width: 302px;
+		height: 76px;
 	}
 
 	.h-captcha[data-size="compact"] {
-		width: 164px;
-		height: 144px;
+		width: 158px;
+		height: 138px;
 	}
 
 	.h-captcha[data-size="invisible"] {
@@ -524,20 +532,23 @@ class Main {
 	}
 
 	.h-captcha::after {
-		content: "' . $load_fail_msg . '";
-	    font: 13px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-		display: block;
+		content: "' . $load_msg . '";
+	    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+	    font-size: 10px;
+	    font-weight: 500;
 		position: absolute;
 		top: 0;
+		bottom: 0;
 		left: 0;
+		right: 0;
 		box-sizing: border-box;
-        color: #ff0000;
+        color: #bf1722;
 		opacity: 0;
 	}
 
 	.h-captcha:not(:has(iframe))::after {
 		animation: hcap-msg-fade-in .3s ease forwards;
-		animation-delay: 2s;
+		animation-delay: ' . $animation_delay . 's;
 	}
 	
 	.h-captcha:has(iframe)::after {
@@ -550,23 +561,33 @@ class Main {
 	}
 
 	.h-captcha[data-size="normal"]::before {
-		width: 300px;
-		height: 74px;
-		background-position: 94% 28%;
+		width: 302px;
+		height: 76px;
+		background-position: 93.8% 28%;
 	}
 
 	.h-captcha[data-size="normal"]::after {
-		padding: 19px 75px 16px 10px;
+		width: 302px;
+	    height: 76px;
+	    display: flex;
+	    flex-wrap: wrap;
+	    align-content: center;
+        line-height: normal;
+	    padding: 0 75px 0 10px;
 	}
 
 	.h-captcha[data-size="compact"]::before {
-		width: 156px;
-		height: 136px;
-		background-position: 50% 79%;
+		width: 158px;
+		height: 138px;
+		background-position: 49.9% 78.8%;
 	}
 
 	.h-captcha[data-size="compact"]::after {
-		padding: 10px 10px 16px 10px;
+		width: 158px;
+		height: 138px;
+		text-align: center;
+		line-height: normal;
+		padding: 24px 10px 10px 10px;
 	}
 
 	.h-captcha[data-theme="light"]::before,
@@ -640,7 +661,7 @@ class Main {
 			justify-content: center;
 		}
 		.h-captcha[data-size="normal"] {
-			scale: calc(270 / 303);
+			scale: calc(270 / 302);
 		    transform: translate(-20px, 0);
 		}
 	}
@@ -797,7 +818,7 @@ class Main {
 		 * Filters delay time for the hCaptcha API script.
 		 *
 		 * Any negative value will prevent the API script from loading
-		 * until user interaction: mouseenter, click, scroll or touch.
+		 * until user interaction: mouseenter, click, scroll, or touch.
 		 * This significantly improves Google Pagespeed Insights score.
 		 *
 		 * @param int $delay Number of milliseconds to delay hCaptcha API script.
@@ -858,15 +879,8 @@ class Main {
 	public function allow_honeypot_and_fst( $value, array $source, $form_id ): bool {
 		$value = (bool) $value;
 
-		/**
-		 * Supported forms.
-		 *
-		 * @var ?array $supported_forms
-		 */
-		static $supported_forms = null;
-
-		if ( null === $supported_forms ) {
-			$supported_forms = [];
+		if ( null === $this->supported_forms ) {
+			$this->supported_forms = [];
 
 			// Use honeypot protection info only, as FST is always added for honeypot forms.
 			$honeypot_protected_forms = Honeypot::get_protected_forms()['honeypot'];
@@ -890,11 +904,11 @@ class Main {
 				$module_source = (array) $module_source;
 				$module_source = [ '' ] === $module_source ? [ 'WordPress' ] : $module_source;
 
-				$supported_forms[] = $module_source;
+				$this->supported_forms[] = $module_source;
 			}
 
-			$supported_forms = array_merge(
-				array_unique( $supported_forms, SORT_REGULAR ),
+			$this->supported_forms = array_merge(
+				array_unique( $this->supported_forms, SORT_REGULAR ),
 				[
 					[ General::class ], // General settings page.
 					[ hcaptcha()->settings()->get_plugin_name() ], // Protect Content.
@@ -902,7 +916,7 @@ class Main {
 			);
 		}
 
-		if ( $source && ! in_array( $source, $supported_forms, true ) ) {
+		if ( $source && ! in_array( $source, $this->supported_forms, true ) ) {
 			hcaptcha()->settings()->set( 'honeypot', [ '' ] );
 			hcaptcha()->settings()->set( 'set_min_submit_time', [ '' ] );
 		}
@@ -930,9 +944,11 @@ class Main {
 	 * @param bool|mixed   $denylisted Whether IP is denylisted.
 	 * @param string|false $client_ip   Client IP.
 	 *
-	 * @return bool|mixed
+	 * @return bool
 	 */
-	public function denylist_ip( $denylisted, $client_ip ) {
+	public function denylist_ip( $denylisted, $client_ip ): bool {
+		$denylisted = (bool) $denylisted;
+
 		$ips = explode(
 			"\n",
 			$this->settings()->get( 'blacklisted_ips' )
@@ -1052,7 +1068,7 @@ class Main {
 				BBPress\Login::class,
 			],
 			'bbPress Lost Password Form'           => [
-				[ 'bbp_status', null ],
+				[ 'bbp_status', 'lost_pass' ],
 				'bbpress/bbpress.php',
 				BBPress\LostPassword::class,
 			],
@@ -1062,7 +1078,7 @@ class Main {
 				BBPress\NewTopic::class,
 			],
 			'bbPress Register Form'                => [
-				[ 'bbp_status', null ],
+				[ 'bbp_status', 'register' ],
 				'bbpress/bbpress.php',
 				BBPress\Register::class,
 			],
@@ -1248,12 +1264,18 @@ class Main {
 			],
 			'Essential Addons Login'               => [
 				[ 'essential_addons_status', 'login' ],
-				'essential-addons-for-elementor-lite/essential_adons_elementor.php',
+				[
+					'essential-addons-elementor/essential_adons_elementor.php',
+					'essential-addons-for-elementor-lite/essential_adons_elementor.php',
+				],
 				EssentialAddons\Login::class,
 			],
 			'Essential Addons Register'            => [
 				[ 'essential_addons_status', 'register' ],
-				'essential-addons-for-elementor-lite/essential_adons_elementor.php',
+				[
+					'essential-addons-elementor/essential_adons_elementor.php',
+					'essential-addons-for-elementor-lite/essential_adons_elementor.php',
+				],
 				EssentialAddons\Register::class,
 			],
 			'Essential Blocks Form'                => [
@@ -1506,11 +1528,6 @@ class Main {
 				'theme-my-login/theme-my-login.php',
 				ThemeMyLogin\LostPassword::class,
 			],
-			'Theme My Login Register'              => [
-				[ 'theme_my_login_status', 'register' ],
-				'theme-my-login/theme-my-login.php',
-				ThemeMyLogin\Register::class,
-			],
 			'Tutor Checkout'                       => [
 				[ 'tutor_status', 'checkout' ],
 				'tutor/tutor.php',
@@ -1643,6 +1660,25 @@ class Main {
 			],
 		];
 
+		if ( is_multisite() ) {
+			$this->modules['Signup Form']           = [
+				[ 'wp_status', 'signup' ],
+				'',
+				WP\Signup::class,
+			];
+			$this->modules['Theme My Login Signup'] = [
+				[ 'theme_my_login_status', 'signup' ],
+				'theme-my-login/theme-my-login.php',
+				ThemeMyLogin\Signup::class,
+			];
+		} else {
+			$this->modules['Theme My Login Register'] = [
+				[ 'theme_my_login_status', 'register' ],
+				'theme-my-login/theme-my-login.php',
+				ThemeMyLogin\Register::class,
+			];
+		}
+
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			// @codeCoverageIgnoreStart
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -1685,7 +1721,7 @@ class Main {
 	 */
 	public function plugin_or_theme_active( $plugin_or_theme_names ): bool {
 		foreach ( (array) $plugin_or_theme_names as $plugin_or_theme_name ) {
-			if ( '' === $plugin_or_theme_name ) {
+			if ( '' === $plugin_or_theme_name || 'WordPress' === $plugin_or_theme_name ) {
 				// WP Core is always active.
 				return true;
 			}
@@ -1735,6 +1771,8 @@ class Main {
 	 */
 	public function load_textdomain(): void {
 		load_default_textdomain();
+
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 		load_plugin_textdomain(
 			'hcaptcha-for-forms-and-more',
 			false,

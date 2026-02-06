@@ -8,6 +8,7 @@
 namespace HCaptcha\Helpers;
 
 use Closure;
+use JsonException;
 
 /**
  * Class Utils.
@@ -18,14 +19,14 @@ class Utils {
 	 *
 	 * @var Utils|null
 	 */
-	protected static $instance;
+	protected static ?Utils $instance = null;
 
 	/**
 	 * Get Utils Instance.
 	 *
 	 * @return self
 	 */
-	public static function instance(): Utils {
+	public static function instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
@@ -45,7 +46,7 @@ class Utils {
 	public function remove_action_regex( string $callback_pattern, string $hook_name = '' ): void {
 		global $wp_filter;
 
-		$hook_name = $hook_name ?: current_action();
+		$hook_name = $hook_name ?: (string) current_action();
 		$hooks     = $wp_filter[ $hook_name ] ?? null;
 		$callbacks = $hooks->callbacks ?? [];
 
@@ -71,7 +72,7 @@ class Utils {
 	public function replace_action_regex( string $callback_pattern, callable $replace, string $hook_name = '' ): void {
 		global $wp_filter;
 
-		$hook_name = $hook_name ?: current_action();
+		$hook_name = $hook_name ?: (string) current_action();
 
 		if ( ! ( isset( $wp_filter[ $hook_name ]->callbacks ) ) ) {
 			return;
@@ -205,13 +206,30 @@ class Utils {
 	 */
 	public static function list_array( array $arr, bool $sep = true ): string {
 		$separator = $sep ?
-			__( 'and', 'wpforms-lite' ) :
-			__( 'or', 'wpforms-lite' );
+			__( 'and', 'hcaptcha-for-forms-and-more' ) :
+			__( 'or', 'hcaptcha-for-forms-and-more' );
 
 		$last  = array_slice( $arr, - 1 );
 		$first = implode( ', ', array_slice( $arr, 0, - 1 ) );
 		$both  = array_filter( array_merge( [ $first ], $last ) );
 
 		return implode( ' ' . $separator . ' ', $both );
+	}
+
+	/**
+	 * Decode JSON to array.
+	 *
+	 * @param string $json JSON string.
+	 *
+	 * @return array
+	 */
+	public static function json_decode_arr( string $json ): array {
+		try {
+			$arr = json_decode( $json, true, 512, JSON_THROW_ON_ERROR ) ?? [];
+		} catch ( JsonException $e ) {
+			$arr = [];
+		}
+
+		return $arr;
 	}
 }

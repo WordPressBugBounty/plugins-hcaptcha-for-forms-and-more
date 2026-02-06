@@ -7,8 +7,12 @@
 
 namespace HCaptcha\Settings;
 
+use HCaptcha\Admin\OnboardingWizard;
+
 use HCaptcha\AntiSpam\AntiSpam;
 use HCaptcha\AntiSpam\Honeypot;
+use HCaptcha\Helpers\HCaptcha;
+use HCaptcha\Helpers\Request;
 use HCaptcha\Helpers\Utils;
 use KAGG\Settings\Abstracts\SettingsBase;
 use Plugin_Upgrader;
@@ -79,6 +83,7 @@ class Integrations extends PluginSettingsBase {
 		'back-in-stock-notifier-for-woocommerce/cwginstocknotifier.php'     => 'woocommerce/woocommerce.php',
 		'customer-reviews-woocommerce/ivole.php'                            => 'woocommerce/woocommerce.php',
 		'elementor-pro/elementor-pro.php'                                   => 'elementor/elementor.php',
+		'essential-addons-elementor/essential_adons_elementor.php'          => 'elementor/elementor.php',
 		'essential-addons-for-elementor-lite/essential_adons_elementor.php' => 'elementor/elementor.php',
 		'fluentformpro/fluentformpro.php'                                   => 'fluentform/fluentform.php',
 		'sfwd-lms/sfwd_lms.php'                                             => 'learndash-hub/learndash-hub.php',
@@ -100,35 +105,35 @@ class Integrations extends PluginSettingsBase {
 	 *
 	 * @var string
 	 */
-	protected $entity = '';
+	protected string $entity = '';
 
 	/**
 	 * Plugin trees.
 	 *
 	 * @var array
 	 */
-	protected $plugin_trees = [];
+	protected array $plugin_trees = [];
 
 	/**
 	 * Installed plugins.
 	 *
 	 * @var array[]
 	 */
-	protected $plugins;
+	protected array $plugins = [];
 
 	/**
 	 * Installed themes.
 	 *
 	 * @var WP_Theme[]
 	 */
-	protected $themes;
+	protected array $themes = [];
 
 	/**
 	 * All protected forms.
 	 *
 	 * @var array
 	 */
-	protected $all_protected_forms = [];
+	protected array $all_protected_forms = [];
 
 	/**
 	 * Get page title.
@@ -163,6 +168,8 @@ class Integrations extends PluginSettingsBase {
 		$this->plugins = get_plugins();
 		$this->themes  = wp_get_themes();
 
+		new OnboardingWizard( $this );
+
 		parent::init();
 	}
 
@@ -189,7 +196,12 @@ class Integrations extends PluginSettingsBase {
 			return;
 		}
 
-		$this->run_checks( self::ACTIVATE_ACTION );
+		$action = Request::filter_input( INPUT_POST, 'action' );
+
+		// Do not run checks when the Playground action is triggered.
+		if ( self::ACTIVATE_ACTION === $action ) {
+			$this->run_checks( self::ACTIVATE_ACTION );
+		}
 
 		// Do not allow redirect during Divi theme activation.
 		remove_action( 'after_switch_theme', 'et_onboarding_trigger_redirect' );
@@ -725,7 +737,6 @@ class Integrations extends PluginSettingsBase {
 				'options' => [
 					'login'     => __( 'Login Form', 'hcaptcha-for-forms-and-more' ),
 					'lost_pass' => __( 'Lost Password Form', 'hcaptcha-for-forms-and-more' ),
-					'register'  => __( 'Register Form', 'hcaptcha-for-forms-and-more' ),
 				],
 			],
 			'tutor_status'                     => [
@@ -831,6 +842,22 @@ class Integrations extends PluginSettingsBase {
 				],
 			],
 		];
+
+		if ( is_multisite() ) {
+			$this->form_fields['wp_status']['options']['signup']             = __( 'Signup Form', 'hcaptcha-for-forms-and-more' );
+			$this->form_fields['theme_my_login_status']['options']['signup'] = __( 'Signup Form', 'hcaptcha-for-forms-and-more' );
+		} else {
+			$this->form_fields['theme_my_login_status']['options']['register'] = __( 'Register Form', 'hcaptcha-for-forms-and-more' );
+		}
+	}
+
+	/**
+	 * Get form fields.
+	 *
+	 * @return array
+	 */
+	public function get_form_fields(): array {
+		return $this->form_fields;
 	}
 
 	/**
@@ -1059,6 +1086,19 @@ class Integrations extends PluginSettingsBase {
 			true
 		);
 
+		$nonce            = Request::filter_input( INPUT_GET, 'nonce' );
+		$suggest_activate = wp_verify_nonce( $nonce, self::ACTIVATE_ACTION )
+			? Request::filter_input( INPUT_GET, 'suggest_activate' )
+			: '';
+
+		if ( $suggest_activate ) {
+			$source = HCaptcha::get_status_source( $suggest_activate );
+
+			if ( hcaptcha()->plugin_or_theme_active( $source ) ) {
+				$suggest_activate = '';
+			}
+		}
+
 		wp_localize_script(
 			self::HANDLE,
 			self::OBJECT,
@@ -1080,6 +1120,8 @@ class Integrations extends PluginSettingsBase {
 				'deactivateThemeMsg'  => __( 'Deactivate %s theme?', 'hcaptcha-for-forms-and-more' ),
 				'selectThemeMsg'      => __( 'Select theme to activate:', 'hcaptcha-for-forms-and-more' ),
 				'onlyOneThemeMsg'     => __( 'Cannot deactivate the only theme on the site.', 'hcaptcha-for-forms-and-more' ),
+				'suggestActivate'     => $suggest_activate,
+				'suggestActivateMsg'  => __( 'Activate plugin or theme by clicking on its logo.', 'hcaptcha-for-forms-and-more' ),
 				'unexpectedErrorMsg'  => __( 'Unexpected error.', 'hcaptcha-for-forms-and-more' ),
 				'OKBtnText'           => __( 'OK', 'hcaptcha-for-forms-and-more' ),
 				'CancelBtnText'       => __( 'Cancel', 'hcaptcha-for-forms-and-more' ),
@@ -1363,20 +1405,13 @@ class Integrations extends PluginSettingsBase {
 	 * @return null|true|WP_Error Null on success, WP_Error on failure. True if the plugin is already active.
 	 */
 	protected function maybe_activate_plugin( string $plugin ) {
-		if ( hcaptcha()->is_plugin_active( $plugin ) ) {
-			return true;
-		}
+		// Always try to install a plugin, as some dependent plugins may require it.
+		ob_start();
+		$result = $this->install_plugin( $plugin );
+		ob_end_clean();
 
-		if ( $this->install ) {
-			ob_start();
-
-			$result = $this->install_plugin( $plugin );
-
-			ob_end_clean();
-
-			if ( is_wp_error( $result ) ) {
-				return $result;
-			}
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		ob_start();
@@ -1394,6 +1429,11 @@ class Integrations extends PluginSettingsBase {
 	 * @return null|WP_Error Null on success, WP_Error on failure.
 	 */
 	protected function install_plugin( string $plugin ): ?WP_Error {
+		// Check if the plugin is already installed.
+		if ( file_exists( constant( 'WP_PLUGIN_DIR' ) . '/' . $plugin ) ) {
+			return null;
+		}
+
 		$plugin = trim( explode( '/', $plugin )[0] );
 
 		if ( empty( $plugin ) ) {
@@ -1444,13 +1484,31 @@ class Integrations extends PluginSettingsBase {
 	 *
 	 * @param string $plugin Path to the plugin file relative to the plugins' directory.
 	 *
-	 * @return null|WP_Error Null on success, WP_Error on failure.
+	 * @return null|true|WP_Error Null on success, WP_Error on failure. True if the plugin is already active.
 	 */
-	protected function activate_plugin( string $plugin ): ?WP_Error {
+	protected function activate_plugin( string $plugin ) {
+		if ( hcaptcha()->is_plugin_active( $plugin ) ) {
+			return true;
+		}
+
 		$network_wide = is_multisite() && $this->is_network_wide();
 
-		// Activate plugins silently to avoid redirects.
-		return activate_plugin( $plugin, '', $network_wide, true );
+		// Block redirects upon plugin activation.
+		add_filter( 'wp_redirect', '__return_false' );
+
+		$result = activate_plugin( $plugin, '', $network_wide );
+
+		if ( null === $result ) {
+			/**
+			 * Fires after a plugin has been activated.
+			 *
+			 * @param string $plugin       Path to the plugin file relative to the plugins' directory.
+			 * @param bool   $network_wide Whether to enable the plugin network-wide.
+			 */
+			do_action( 'hcaptcha_activated_plugin', $plugin, $network_wide );
+		}
+
+		return $result;
 	}
 
 	/**
@@ -1495,7 +1553,7 @@ class Integrations extends PluginSettingsBase {
 		);
 		$dependencies     = (array) ( self::PLUGIN_DEPENDENCIES[ $plugin ] ?? [] );
 
-		return array_merge( $wp_dependencies, $dependencies );
+		return array_unique( array_merge( $wp_dependencies, $dependencies ) );
 	}
 
 	/**
@@ -1507,20 +1565,21 @@ class Integrations extends PluginSettingsBase {
 	 */
 	protected function plugin_dirs_to_slugs( array $dirs ): array {
 		if ( ! $dirs ) {
-			return $dirs;
+			return [];
 		}
 
-		$slugs = array_keys( $this->plugins );
+		$slugs          = array_keys( $this->plugins );
+		$converted_dirs = [];
 
-		foreach ( $dirs as &$dir ) {
+		foreach ( $dirs as $dir ) {
 			$slug = preg_grep( "#^$dir/#", $slugs );
 
 			if ( $slug ) {
-				$dir = reset( $slug );
+				$converted_dirs[] = reset( $slug );
 			}
 		}
 
-		return $dirs;
+		return $converted_dirs;
 	}
 
 	/**
@@ -1556,7 +1615,7 @@ class Integrations extends PluginSettingsBase {
 			$plugin_names = array_merge( [], ...$plugin_names );
 		}
 
-		if ( isset( $node['result'] ) ) {
+		if ( isset( $node['result'] ) && is_wp_error( $node['result'] ) ) {
 			return array_unique( array_merge( [], $plugin_names ) );
 		}
 
@@ -1823,17 +1882,19 @@ class Integrations extends PluginSettingsBase {
 	 * @return array
 	 */
 	protected function get_plugin_data( string $plugin, bool $markup = true, bool $translate = true ): array {
-		if ( ! $this->plugin_or_theme_installed( $plugin ) ) {
-			return [];
-		}
-
 		if ( ! function_exists( 'get_plugin_data' ) ) {
 			// @CodeCoverageIgnoreStart
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			// @CodeCoverageIgnoreEnd
 		}
 
-		return get_plugin_data( $this->get_plugin_file( $plugin ), $markup, $translate );
+		$plugin_file = $this->get_plugin_file( $plugin );
+
+		if ( ! file_exists( $plugin_file ) ) {
+			return [];
+		}
+
+		return get_plugin_data( $plugin_file, $markup, $translate );
 	}
 
 	/**

@@ -1,3 +1,61 @@
+= 4.22.0 =
+* The minimum required PHP version is now 7.4.
+* The minimum required WordPress version is now 6.0.
+* Added support of 1Password on the General page. 
+* Fixed an issue where third-party plugins calling WordPress core functions incorrectly could break What's New admin scripts and styles.
+* Fixed LearDash Login form.
+
+= 4.21.1 =
+* Fixed hCaptcha not loading on Contact Form 7.
+
+= 4.21.0 =
+* Added AI-ready security actions via the WordPress Abilities API, enabling automated threat inspection and response.
+* Added compatibility with the latest version of the Ninja Forms plugin.
+* Fixed FluentForms integrations after the latest FluentForms update.
+* Fixed the inability to send FluentForms Conversational Form.
+* Fixed the racing condition which sometimes led to double rendering of the hCaptcha widget on any forms.
+* Fixed double rendering of the hCaptcha widget on the Elementor Form.
+* Fixed an error activating a free plugin when its premium version is not available.
+* Fixed highlighting of the suggested plugin when it is already activated.
+* Fixed an attempt for installation of an already installed plugin.
+* Fixed installing plugins declared as WordPress dependencies.
+* Fixed Jetpack test form appearance on the Playground.
+
+= 4.20.0 =
+* Added Divi 5 support.
+* Added onboarding wizard.
+* Added a dynamic Playground menu update after activating and deactivating of plugins and themes.
+* Added support for the Essential Addons for Elementor Pro plugin.
+* Added the ability to show What's New info for any version with the 'whats_new' GET parameter.
+* Fixed "[hCaptcha] should not render before js api is fully loaded" warning on the General page.
+* Fixed race condition when loading JavaScript on Playground.
+* Fixed console errors with Divi Contact Form.
+* Fixed the placeholder layout following hCaptcha layout changes.
+* Fixed the empty hCaptcha error on the WooCommerce Checkout page when honeypot is off.
+* Fixed multiple hCaptcha widgets on the Mailchimp form preview.
+* Fixed hCaptcha What's New layout.
+* Fixed error messaging in Jetpack forms.
+
+= 4.19.0 =
+* Added Elementor Safe Mode information to the System Info admin page.
+* Added Patchstack security program support.
+* Added support for WP Multisite Signup form.
+* Added support for a Theme My Login Multisite Signup form.
+* Added test mode by default on the first installation.
+* Improved a page speed load via passive event listeners.
+* Improved the notification message on the placeholder when hCaptcha is not loaded.
+* Fixed the delay showing hCaptcha when a WP Login form is protected.
+* Fixed the delay showing hCaptcha when a Colorlib Customizer Login form is protected.
+* Fixed the delay showing hCaptcha when an Easy Digital Download Login form is protected.
+* Fixed Ajax requests on admin pages with WP Playground.
+* Fixed the JS error on Forms and Events admin pages with empty data.
+* Fixed a fatal error when only Elementor is installed without Pro.
+* Fixed 'Bad hCaptcha nonce' error with a direct `/wp-login.php?action=postpass` request.
+* Fixed plugin activation on the Integrations page, executing activation hooks.
+* Fixed detection of the editor pages when hCaptcha is disabled for logged-in users.
+* Fixed Elementor Pro Form with default hCaptcha settings.
+* Fixed the zero size of the placeholder with default settings.
+
 = 4.18.0 =
 * Added honeypot and minimum submit time support for Blocksy, Brevo, CoBlocks, Contact Form 7 Live Form, Download Manager, Essential Blocks, Fluent Forms, Formidable Forms, Forminator, GiveWP Form, Gravity Forms, Kadence, MailPoet, Otter, Password Protected, Ultimate Addons for Elementor, and Wordfence.
 * Added the ability to specify Protected URLs on the General page with schema and domain, allowing to protect specific pages on multisite.

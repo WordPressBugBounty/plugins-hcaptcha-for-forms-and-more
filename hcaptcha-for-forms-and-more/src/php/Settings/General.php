@@ -8,6 +8,7 @@
 namespace HCaptcha\Settings;
 
 use HCaptcha\Admin\Notifications;
+use HCaptcha\Admin\OnboardingWizard;
 use HCaptcha\AntiSpam\AntiSpam;
 use HCaptcha\Helpers\API;
 use HCaptcha\Helpers\HCaptcha;
@@ -83,7 +84,7 @@ class General extends PluginSettingsBase {
 	public const SECTION_ANTISPAM = 'antispam';
 
 	/**
-	 * Other section id.
+	 * Another section id.
 	 */
 	public const SECTION_OTHER = 'other';
 
@@ -128,6 +129,11 @@ class General extends PluginSettingsBase {
 	public const MODE_TEST_ENTERPRISE_BOT_DETECTED_SITE_KEY = '30000000-ffff-ffff-ffff-000000000003';
 
 	/**
+	 * Test secret key.
+	 */
+	public const MODE_TEST_SECRET_KEY = '0' . 'x' . '0000000000000000000000000000000000000000'; // phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
+
+	/**
 	 * User settings meta.
 	 */
 	public const USER_SETTINGS_META = 'hcaptcha_user_settings';
@@ -140,9 +146,9 @@ class General extends PluginSettingsBase {
 	/**
 	 * Notifications class instance.
 	 *
-	 * @var Notifications
+	 * @var Notifications|null
 	 */
-	protected $notifications;
+	protected ?Notifications $notifications = null;
 
 	/**
 	 * Get page title.
@@ -163,6 +169,17 @@ class General extends PluginSettingsBase {
 	}
 
 	/**
+	 * Init class.
+	 *
+	 * @return void
+	 */
+	public function init(): void {
+		new OnboardingWizard( $this );
+
+		parent::init();
+	}
+
+	/**
 	 * Init class hooks.
 	 *
 	 * @return void
@@ -173,11 +190,11 @@ class General extends PluginSettingsBase {
 		$hcaptcha = hcaptcha();
 
 		if ( wp_doing_ajax() ) {
-			// We need ajax actions in the Notifications class.
+			// We need ajax actions in the Notifications and Onboarding class.
 			$this->init_notifications();
 		} else {
 			// The current class loaded early on plugins_loaded.
-			// Init Notifications later, when the Settings class is ready.
+			// Init Notifications and Onboarding later, when the Settings class is ready.
 			// Also, we need to check if we are on the General screen.
 			add_action( 'current_screen', [ $this, 'init_notifications' ] );
 		}
@@ -220,11 +237,13 @@ class General extends PluginSettingsBase {
 				'autocomplete' => 'nickname',
 				'lp_ignore'    => 'true',
 				'section'      => self::SECTION_KEYS,
+				'helper'       => __( 'To fill out the site key, set Mode to Live.', 'hcaptcha-for-forms-and-more' ),
 			],
 			'secret_key'           => [
 				'label'   => __( 'Secret Key', 'hcaptcha-for-forms-and-more' ),
 				'type'    => 'password',
 				'section' => self::SECTION_KEYS,
+				'helper'  => __( 'To fill out the secret key, set Mode to Live.', 'hcaptcha-for-forms-and-more' ),
 			],
 			'sample_hcaptcha'      => [
 				'label'   => __( 'Active hCaptcha to Check Site Config', 'hcaptcha-for-forms-and-more' ),
@@ -399,7 +418,7 @@ class General extends PluginSettingsBase {
 					self::MODE_TEST_ENTERPRISE_BOT_DETECTED  => __( 'Test: Enterprise Account (Bot Detected)', 'hcaptcha-for-forms-and-more' ),
 				],
 				// phpcs:enable WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned, WordPress.Arrays.MultipleStatementAlignment.LongIndexSpaceBeforeDoubleArrow
-				'default' => self::MODE_LIVE,
+				'default' => self::MODE_TEST_PUBLISHER,
 				'helper'  => __(
 					'Select live or test mode. In test mode, predefined keys are used.',
 					'hcaptcha-for-forms-and-more'
@@ -707,14 +726,6 @@ class General extends PluginSettingsBase {
 		}
 
 		$settings = hcaptcha()->settings();
-
-		// In Settings, a filter applied for mode.
-		$mode = $settings->get_mode();
-
-		if ( self::MODE_LIVE !== $mode ) {
-			$this->form_fields['site_key']['disabled']   = true;
-			$this->form_fields['secret_key']['disabled'] = true;
-		}
 
 		$config_params = $settings->get_config_params();
 		$custom_theme  = $config_params['theme'] ?? [];

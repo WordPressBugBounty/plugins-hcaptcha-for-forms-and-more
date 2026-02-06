@@ -38,14 +38,14 @@ class FormsPage extends ListPageBase {
 	 *
 	 * @var FormsTable
 	 */
-	protected $list_table;
+	protected FormsTable $list_table;
 
 	/**
 	 * Served events.
 	 *
 	 * @var array
 	 */
-	protected $served;
+	protected array $served = [];
 
 	/**
 	 * Get page title.
@@ -259,7 +259,7 @@ class FormsPage extends ListPageBase {
 		$where_clause = implode( ' OR ', $conditions );
 		$where_clause = "($where_clause) AND date_gmt BETWEEN %s AND %s";
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		$result = $wpdb->query(
 			$wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare

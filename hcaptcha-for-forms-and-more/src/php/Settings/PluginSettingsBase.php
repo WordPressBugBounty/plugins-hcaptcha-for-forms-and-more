@@ -31,7 +31,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @var bool
 	 */
-	protected $submit_shown = false;
+	protected bool $submit_shown = false;
 
 	/**
 	 * Constructor.
@@ -233,7 +233,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 		}
 
 		$settings = hcaptcha()->settings();
-		$url      = 'https://wordpress.org/support/plugin/hcaptcha-for-forms-and-more/reviews/?filter=5#new-post';
+		$url      = 'https://wordpress.org/support/plugin/hcaptcha-for-forms-and-more/reviews/#new-post';
 
 		return wp_kses(
 			sprintf(

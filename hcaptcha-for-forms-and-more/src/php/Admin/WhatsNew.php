@@ -7,6 +7,7 @@
 
 namespace HCaptcha\Admin;
 
+use HCaptcha\Helpers\Request;
 use HCaptcha\Settings\General;
 
 /**
@@ -32,9 +33,14 @@ class WhatsNew extends NotificationsBase {
 	private const MARK_SHOWN_ACTION = 'hcaptcha-mark-shown';
 
 	/**
-	 * Settings key for last shown What's New version.
+	 * Settings key for a last shown What's New version.
 	 */
 	private const WHATS_NEW_KEY = 'whats_new_last_shown_version';
+
+	/**
+	 * Query parameter for forcing What's New popup.
+	 */
+	private const WHATS_NEW_PARAM = 'whats_new';
 
 	/**
 	 * Method prefix.
@@ -46,7 +52,7 @@ class WhatsNew extends NotificationsBase {
 	 *
 	 * @var bool
 	 */
-	protected $allowed = false;
+	protected bool $allowed = false;
 
 	/**
 	 * Constructor.
@@ -63,6 +69,13 @@ class WhatsNew extends NotificationsBase {
 	 * @return void
 	 */
 	public function init(): void {
+		$settings = hcaptcha()->settings();
+
+		if ( 'completed' !== $settings->get( OnboardingWizard::OPTION_NAME ) ) {
+			// Do not show the What's New popup if the onboarding wizard is not completed.
+			return;
+		}
+
 		$this->init_hooks();
 	}
 
@@ -73,7 +86,7 @@ class WhatsNew extends NotificationsBase {
 	 */
 	private function init_hooks(): void {
 		add_action( 'kagg_settings_tab', [ $this, 'action_settings_tab' ] );
-		add_action( 'admin_print_footer_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'admin_print_footer_scripts', [ $this, 'enqueue_assets' ], 9 );
 		add_action( 'admin_footer', [ $this, 'maybe_show_popup' ] );
 		add_action( 'wp_ajax_' . self::MARK_SHOWN_ACTION, [ $this, 'mark_shown' ] );
 		add_filter( 'update_footer', [ $this, 'update_footer' ], 1010 );
@@ -120,6 +133,7 @@ class WhatsNew extends NotificationsBase {
 				'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
 				'markShownAction' => self::MARK_SHOWN_ACTION,
 				'markShownNonce'  => wp_create_nonce( self::MARK_SHOWN_ACTION ),
+				'whatsNewParam'   => self::WHATS_NEW_PARAM,
 			]
 		);
 	}
@@ -135,8 +149,10 @@ class WhatsNew extends NotificationsBase {
 		}
 
 		$prefix   = self::PREFIX;
-		$shown    = hcaptcha()->settings()->get( self::WHATS_NEW_KEY );
-		$current  = explode( '-', constant( 'HCAPTCHA_VERSION' ) )[0];
+		$forced   = Request::filter_input( INPUT_GET, self::WHATS_NEW_PARAM );
+		$forced   = $this->normalize_version( $forced );
+		$current  = $forced ?: explode( '-', constant( 'HCAPTCHA_VERSION' ) )[0];
+		$shown    = $forced ? '' : hcaptcha()->settings()->get( self::WHATS_NEW_KEY );
 		$methods  = array_filter(
 			get_class_methods( $this ),
 			static function ( $method ) use ( $prefix ) {
@@ -186,7 +202,7 @@ class WhatsNew extends NotificationsBase {
 			wp_send_json_error( esc_html__( 'You are not allowed to perform this action.', 'hcaptcha-for-forms-and-more' ) );
 		}
 
-		$version = isset( $_POST['version'] ) ? sanitize_text_field( wp_unslash( $_POST['version'] ) ) : '';
+		$version = Request::filter_input( INPUT_POST, 'version' );
 
 		$this->update_whats_new( $version );
 		wp_send_json_success();
@@ -347,7 +363,7 @@ class WhatsNew extends NotificationsBase {
 				'<p>%1$s</p><p>%2$s</p><p>%3$s</p>',
 				sprintf(
 				/* translators: 1: Pro link. */
-					__( 'Add a hidden %1$s field for bot detection before processing hCaptcha.', 'hcaptcha-for-forms-and-more' ),
+					__( 'Added a hidden %1$s field for bot detection before processing hCaptcha.', 'hcaptcha-for-forms-and-more' ),
 					sprintf(
 						'<a href="%1$s" target="_blank">%2$s</a>',
 						$urls['honeypot'],
@@ -356,7 +372,7 @@ class WhatsNew extends NotificationsBase {
 				),
 				sprintf(
 				/* translators: 1: Pro link. */
-					__( 'Add minimum form %1$s for bot detection before processing hCaptcha.', 'hcaptcha-for-forms-and-more' ),
+					__( 'Added minimum form %1$s for bot detection before processing hCaptcha.', 'hcaptcha-for-forms-and-more' ),
 					sprintf(
 						'<a href="%1$s" target="_blank">%2$s</a>',
 						$urls['token'],
@@ -371,6 +387,73 @@ class WhatsNew extends NotificationsBase {
 			],
 			'image'   => [
 				'url'      => $urls['honeypot_demo'],
+				'lightbox' => true,
+			],
+		];
+
+		$this->show_block( $block );
+	}
+
+	/**
+	 * What's New 4.20.0 content.
+	 *
+	 * @return void
+	 * @noinspection HtmlUnknownTarget
+	 * @noinspection PhpUnused
+	 */
+	protected function whats_new_4_20_0(): void {
+		$urls = $this->prepare_urls();
+
+		$block = [
+			'type'    => 'center',
+			'badge'   => __( 'New Feature', 'hcaptcha-for-forms-and-more' ),
+			'title'   => __( 'Onboarding Wizard', 'hcaptcha-for-forms-and-more' ),
+			'message' => sprintf(
+				'<p>%1$s</p><p>%2$s</p>',
+				__( 'Added an onboarding wizard for new users.', 'hcaptcha-for-forms-and-more' ),
+				__( 'You can restart it anytime by adding the <code>&onboarding</code> parameter to the browser URL.', 'hcaptcha-for-forms-and-more' )
+			),
+			'button'  => [
+				'url'  => $urls['onboarding'],
+				'text' => __( 'Restart wizard', 'hcaptcha-for-forms-and-more' ),
+			],
+			'image'   => [
+				'url'      => $urls['onboarding_demo'],
+				'lightbox' => true,
+			],
+		];
+
+		$this->show_block( $block );
+	}
+
+	/**
+	 * What's New 4.21.0 content.
+	 *
+	 * @return void
+	 * @noinspection HtmlUnknownTarget
+	 * @noinspection PhpUnused
+	 */
+	protected function whats_new_4_21_0(): void {
+		$urls = $this->prepare_urls();
+
+		$block = [
+			'type'    => 'left',
+			'badge'   => __( 'New Feature', 'hcaptcha-for-forms-and-more' ),
+			'title'   => __( 'AI-Ready Security Actions', 'hcaptcha-for-forms-and-more' ),
+			'message' => sprintf(
+				'<p>%1$s</p><p>%2$s</p><p>%3$s</p><ul><li>%4$s</li><li>%5$s</li></ul>',
+				__( 'hCaptcha for WordPress now exposes selected security capabilities via the WordPress Abilities API — a machine-readable interface designed for automation tools and AI agents.', 'hcaptcha-for-forms-and-more' ),
+				__( 'This enables programmatic threat monitoring and response workflows without relying on custom REST endpoints or UI automation.', 'hcaptcha-for-forms-and-more' ),
+				__( 'Two initial abilities are included:', 'hcaptcha-for-forms-and-more' ),
+				__( 'Threat snapshot (aggregated metrics and top offenders)', 'hcaptcha-for-forms-and-more' ),
+				__( 'Privacy-safe blocking based on hashed offender identifiers', 'hcaptcha-for-forms-and-more' )
+			),
+			'button'  => [
+				'url'  => $urls['ai_abilities'],
+				'text' => __( 'Read documentation', 'hcaptcha-for-forms-and-more' ),
+			],
+			'image'   => [
+				'url'      => $urls['ai_abilities_img'],
 				'lightbox' => true,
 			],
 		];
@@ -402,19 +485,21 @@ class WhatsNew extends NotificationsBase {
 
 		?>
 		<div class="hcaptcha-whats-new-block <?php echo esc_attr( $block['type'] ); ?>">
-			<?php echo wp_kses_post( $badge ); ?>
-			<h2>
-				<?php echo esc_html( $block['title'] ); ?>
-			</h2>
-			<div class="hcaptcha-whats-new-message">
-				<?php echo wp_kses_post( $block['message'] ); ?>
-			</div>
-			<div class="hcaptcha-whats-new-button">
-				<a
-						href="<?php echo esc_url( $block['button']['url'] ); ?>" class="button button-primary"
-						target="_blank">
-					<?php echo esc_html( $block['button']['text'] ); ?>
-				</a>
+			<div class="hcaptcha-whats-new-text">
+				<?php echo wp_kses_post( $badge ); ?>
+				<h2>
+					<?php echo esc_html( $block['title'] ); ?>
+				</h2>
+				<div class="hcaptcha-whats-new-message">
+					<?php echo wp_kses_post( $block['message'] ); ?>
+				</div>
+				<div class="hcaptcha-whats-new-button">
+					<a
+							href="<?php echo esc_url( $block['button']['url'] ); ?>" class="button button-primary"
+							target="_blank">
+						<?php echo esc_html( $block['button']['text'] ); ?>
+					</a>
+				</div>
 			</div>
 			<div class="hcaptcha-whats-new-image">
 				<?php if ( ! empty( $block['image']['url'] ) ) : ?>
@@ -460,7 +545,7 @@ class WhatsNew extends NotificationsBase {
 	 * @return bool
 	 */
 	private function is_valid_version( string $version ): bool {
-		return (bool) preg_match( '/^\d+(\.\d+)*([a-zA-Z0-9\-._]*)?$/', $version );
+		return '' !== $this->normalize_version( $version );
 	}
 
 	/**
@@ -483,5 +568,36 @@ class WhatsNew extends NotificationsBase {
 	 */
 	protected function version_to_method( string $version ): string {
 		return self::PREFIX . str_replace( '.', '_', $version );
+	}
+
+	/**
+	 * Normalize version string for version_compare().
+	 *
+	 * Accept:
+	 *  - 8
+	 *  - 8.1
+	 *  - 8.1.2
+	 *  - 8.1.2-RC1
+	 *  - 8.1.2-dev
+	 *
+	 * Return an empty string if the string format is invalid.
+	 *
+	 * @param string $version Version string.
+	 *
+	 * @return string
+	 */
+	private function normalize_version( string $version ): string {
+		$version = trim( $version );
+
+		// ^ start with digits: X[.Y[.Z[.W]]]
+		// optional pre-release suffix: -?(alpha|beta|RC|rc|dev)\d*
+		$pattern = '/^\d+(?:\.\d+){0,3}(?:-?(?:alpha|beta|rc|RC|dev)\d*)?$/';
+
+		if ( ! preg_match( $pattern, $version, $m ) ) {
+			return '';
+		}
+
+		// Normalize RC case.
+		return str_replace( 'rc', 'RC', $m[0] );
 	}
 }

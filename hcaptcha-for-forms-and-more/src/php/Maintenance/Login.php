@@ -1,6 +1,6 @@
 <?php
 /**
- * Login class file.
+ * The Login class file.
  *
  * @package hcaptcha-wp
  */
@@ -32,7 +32,7 @@ class Login extends LoginBase {
 	 *
 	 * @var string|null
 	 */
-	private $error_message;
+	private ?string $error_message = null;
 
 	/**
 	 * Init hooks.
@@ -77,6 +77,7 @@ class Login extends LoginBase {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo $login_form;
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'wp_print_footer_scripts' );
 	}
 

@@ -8,6 +8,7 @@
 namespace HCaptcha\NF;
 
 use HCaptcha\Helpers\HCaptcha;
+use HCaptcha\Helpers\Utils;
 use HCaptcha\Main;
 
 /**
@@ -41,14 +42,14 @@ class NF implements Base {
 	 *
 	 * @var int
 	 */
-	protected $form_id = 0;
+	protected int $form_id = 0;
 
 	/**
 	 * Templates dir.
 	 *
 	 * @var string
 	 */
-	protected $templates_dir;
+	protected string $templates_dir;
 
 	/**
 	 * NF constructor.
@@ -76,6 +77,11 @@ class NF implements Base {
 		add_filter( "ninja_forms_localize_field_{$name}_preview", [ $this, 'localize_field' ] );
 		add_action( 'wp_print_footer_scripts', [ $this, 'nf_captcha_script' ], 9 );
 		add_filter( 'script_loader_tag', [ $this, 'add_type_module' ], 10, 3 );
+
+		// Block native hCaptcha settings in the Ninja Forms plugin.
+		add_action( 'ninja-forms_page_nf-settings', [ $this, 'before_nf_settings' ], 0 );
+		add_action( 'ninja-forms_page_nf-settings', [ $this, 'after_nf_settings' ], 20 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 	}
 
 	/**
@@ -119,7 +125,7 @@ class NF implements Base {
 			return;
 		}
 
-		$vars  = json_decode( $m[1], true );
+		$vars  = Utils::json_decode_arr( $m[1] );
 		$found = false;
 
 		foreach ( $vars['preloadedFormData']['fields'] as & $field ) {
@@ -190,6 +196,9 @@ class NF implements Base {
 	 */
 	public function register_fields( $fields ): array {
 		$fields = (array) $fields;
+
+		// Deactivate the native hCaptcha field by Ninja Forms plugin.
+		unset( $fields['hcaptcha'] );
 
 		$index = array_search( 'recaptcha', array_keys( $fields ), true );
 		$index = false === $index ? count( $fields ) : $index;
@@ -287,6 +296,9 @@ class NF implements Base {
 			HCAPTCHA_VERSION,
 			true
 		);
+
+		// Dequeue hCaptcha script by Ninja Forms plugin.
+		wp_dequeue_script( 'nf-hcaptcha' );
 	}
 
 	/**
@@ -307,5 +319,66 @@ class NF implements Base {
 		}
 
 		return HCaptcha::add_type_module( $tag );
+	}
+
+	/**
+	 * Before Ninja Forms settings.
+	 */
+	public function before_nf_settings(): void {
+		ob_start();
+	}
+
+	/**
+	 * After Ninja Forms settings.
+	 * Block native hCaptcha settings.
+	 */
+	public function after_nf_settings(): void {
+		$output = (string) ob_get_clean();
+
+		$notice = HCaptcha::get_hcaptcha_plugin_notice();
+
+		ob_start();
+
+		?>
+		<div class="postbox">
+			<h3 class="hndle">
+				<span><?php esc_html_e( 'hCaptcha Settings', 'hcaptcha-for-forms-and-more' ); ?></span>
+			</h3>
+			<div class="inside">
+				<div class="hcaptcha-notice-label"><?php echo wp_kses_post( $notice['label'] ); ?></div>
+				<div class="hcaptcha-notice-description"><?php echo wp_kses_post( $notice['description'] ); ?></div>
+			</div>
+		</div>
+		<?php
+
+		$notice_section = ob_get_clean();
+
+		$search = '<div id="ninja_forms_metabox_hcaptcha_settings"';
+
+		// Block native output and add our notice.
+		$output = str_replace(
+			$search,
+			$notice_section . $search . ' style="display:none;"',
+			$output
+		);
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $output;
+	}
+
+	/**
+	 * Enqueue admin scripts.
+	 *
+	 * @return void
+	 */
+	public function admin_enqueue_scripts(): void {
+		$min = hcap_min_suffix();
+
+		wp_enqueue_style(
+			self::ADMIN_HANDLE,
+			constant( 'HCAPTCHA_URL' ) . "/assets/css/admin-nf$min.css",
+			[],
+			constant( 'HCAPTCHA_VERSION' )
+		);
 	}
 }

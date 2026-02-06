@@ -1,6 +1,6 @@
 <?php
 /**
- * 'Form' class file.
+ * The Form class file.
  *
  * @package hcaptcha-wp
  */
@@ -144,7 +144,7 @@ class Comment extends Base {
 		/* language=CSS */
 		$css = '
 	.wpd-form-col-hcaptcha {
-		min-width: 303px;
+		min-width: 302px;
 	}
 
 	.wpd-field-hcaptcha .h-captcha {

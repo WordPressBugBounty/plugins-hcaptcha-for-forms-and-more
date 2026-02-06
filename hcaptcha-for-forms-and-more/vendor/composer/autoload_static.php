@@ -4,14 +4,14 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22
+class ComposerStaticInit968c4b35158e65be9d1126ebd7ae70b2
 {
     public static $prefixLengthsPsr4 = array (
-        'K' => 
+        'K' =>
         array (
             'KAGG\\Settings\\Abstracts\\' => 24,
         ),
-        'H' => 
+        'H' =>
         array (
             'HCaptcha\\Scoper\\' => 16,
             'HCaptcha\\' => 9,
@@ -19,15 +19,15 @@ class ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22
     );
 
     public static $prefixDirsPsr4 = array (
-        'KAGG\\Settings\\Abstracts\\' => 
+        'KAGG\\Settings\\Abstracts\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src/php/Settings/Abstracts',
         ),
-        'HCaptcha\\Scoper\\' => 
+        'HCaptcha\\Scoper\\' =>
         array (
             0 => __DIR__ . '/../..' . '/.php-scoper/src',
         ),
-        'HCaptcha\\' => 
+        'HCaptcha\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src/php',
         ),
@@ -36,6 +36,7 @@ class ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'HCaptcha\\ACFE\\Form' => __DIR__ . '/../..' . '/src/php/ACFE/Form.php',
+        'HCaptcha\\Abilities\\Abilities' => __DIR__ . '/../..' . '/src/php/Abilities/Abilities.php',
         'HCaptcha\\Abstracts\\CommentBase' => __DIR__ . '/../..' . '/src/php/Abstracts/CommentBase.php',
         'HCaptcha\\Abstracts\\LoginBase' => __DIR__ . '/../..' . '/src/php/Abstracts/LoginBase.php',
         'HCaptcha\\Abstracts\\LostPasswordBase' => __DIR__ . '/../..' . '/src/php/Abstracts/LostPasswordBase.php',
@@ -45,6 +46,7 @@ class ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22
         'HCaptcha\\Admin\\Events\\TableBase' => __DIR__ . '/../..' . '/src/php/Admin/Events/TableBase.php',
         'HCaptcha\\Admin\\Notifications' => __DIR__ . '/../..' . '/src/php/Admin/Notifications.php',
         'HCaptcha\\Admin\\NotificationsBase' => __DIR__ . '/../..' . '/src/php/Admin/NotificationsBase.php',
+        'HCaptcha\\Admin\\OnboardingWizard' => __DIR__ . '/../..' . '/src/php/Admin/OnboardingWizard.php',
         'HCaptcha\\Admin\\PluginStats' => __DIR__ . '/../..' . '/src/php/Admin/PluginStats.php',
         'HCaptcha\\Admin\\Privacy' => __DIR__ . '/../..' . '/src/php/Admin/Privacy.php',
         'HCaptcha\\Admin\\WhatsNew' => __DIR__ . '/../..' . '/src/php/Admin/WhatsNew.php',
@@ -126,6 +128,7 @@ class ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22
         'HCaptcha\\Helpers\\Minify\\CSS' => __DIR__ . '/../..' . '/src/php/Helpers/Minify/CSS.php',
         'HCaptcha\\Helpers\\Minify\\JS' => __DIR__ . '/../..' . '/src/php/Helpers/Minify/JS.php',
         'HCaptcha\\Helpers\\Pages' => __DIR__ . '/../..' . '/src/php/Helpers/Pages.php',
+        'HCaptcha\\Helpers\\Playground' => __DIR__ . '/../..' . '/src/php/Helpers/Playground.php',
         'HCaptcha\\Helpers\\Request' => __DIR__ . '/../..' . '/src/php/Helpers/Request.php',
         'HCaptcha\\Helpers\\Utils' => __DIR__ . '/../..' . '/src/php/Helpers/Utils.php',
         'HCaptcha\\IcegramExpress\\Form' => __DIR__ . '/../..' . '/src/php/IcegramExpress/Form.php',
@@ -185,6 +188,7 @@ class ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22
         'HCaptcha\\ThemeMyLogin\\Login' => __DIR__ . '/../..' . '/src/php/ThemeMyLogin/Login.php',
         'HCaptcha\\ThemeMyLogin\\LostPassword' => __DIR__ . '/../..' . '/src/php/ThemeMyLogin/LostPassword.php',
         'HCaptcha\\ThemeMyLogin\\Register' => __DIR__ . '/../..' . '/src/php/ThemeMyLogin/Register.php',
+        'HCaptcha\\ThemeMyLogin\\Signup' => __DIR__ . '/../..' . '/src/php/ThemeMyLogin/Signup.php',
         'HCaptcha\\Tutor\\Checkout' => __DIR__ . '/../..' . '/src/php/Tutor/Checkout.php',
         'HCaptcha\\Tutor\\Login' => __DIR__ . '/../..' . '/src/php/Tutor/Login.php',
         'HCaptcha\\Tutor\\LostPassword' => __DIR__ . '/../..' . '/src/php/Tutor/LostPassword.php',
@@ -233,6 +237,7 @@ class ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22
         'HCaptcha\\WP\\LostPassword' => __DIR__ . '/../..' . '/src/php/WP/LostPassword.php',
         'HCaptcha\\WP\\PasswordProtected' => __DIR__ . '/../..' . '/src/php/WP/PasswordProtected.php',
         'HCaptcha\\WP\\Register' => __DIR__ . '/../..' . '/src/php/WP/Register.php',
+        'HCaptcha\\WP\\Signup' => __DIR__ . '/../..' . '/src/php/WP/Signup.php',
         'HCaptcha\\Wordfence\\General' => __DIR__ . '/../..' . '/src/php/Wordfence/General.php',
         'KAGG\\Settings\\Abstracts\\SettingsBase' => __DIR__ . '/../..' . '/src/php/Settings/Abstracts/SettingsBase.php',
         'KAGG\\Settings\\Abstracts\\SettingsInterface' => __DIR__ . '/../..' . '/src/php/Settings/Abstracts/SettingsInterface.php',
@@ -241,9 +246,9 @@ class ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit0948d9ad69a9f4852d35c417b9397c22::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit968c4b35158e65be9d1126ebd7ae70b2::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit968c4b35158e65be9d1126ebd7ae70b2::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit968c4b35158e65be9d1126ebd7ae70b2::$classMap;
 
         }, null, ClassLoader::class);
     }

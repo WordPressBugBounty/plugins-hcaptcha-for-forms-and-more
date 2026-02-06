@@ -1,6 +1,6 @@
 <?php
 /**
- * 'Form' class file.
+ * The Form class file.
  *
  * @package hcaptcha-wp
  */
@@ -31,7 +31,14 @@ class Login {
 	 *
 	 * @var string|null
 	 */
-	private $error_message;
+	private ?string $error_message = null;
+
+	/**
+	 * Login form shown.
+	 *
+	 * @var bool
+	 */
+	private bool $login_form_shown = false;
 
 	/**
 	 * Form constructor.
@@ -66,6 +73,8 @@ class Login {
 		if ( 'edd/login' !== $block['blockName'] || ! did_action( 'edd_login_fields_after' ) ) {
 			return $block_content;
 		}
+
+		$this->login_form_shown = true;
 
 		$args = [
 			'action' => self::ACTION,
@@ -138,6 +147,6 @@ class Login {
 	 */
 	public function delay_api( $delay ): int {
 		// Do not delay API request on login forms for compatibility with password managers.
-		return 0;
+		return $this->login_form_shown ? 0 : (int) $delay;
 	}
 }

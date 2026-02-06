@@ -9,6 +9,8 @@
 
 namespace HCaptcha\Settings;
 
+use HCaptcha\Helpers\Utils;
+use JsonException;
 use KAGG\Settings\Abstracts\SettingsBase;
 use KAGG\Settings\Abstracts\SettingsInterface;
 
@@ -29,14 +31,14 @@ class Settings implements SettingsInterface {
 	 *
 	 * @var array
 	 */
-	protected $menu_groups;
+	protected array $menu_groups = [];
 
 	/**
 	 * Menu pages and tabs in one flat array.
 	 *
 	 * @var array
 	 */
-	protected $tabs = [];
+	protected array $tabs = [];
 
 	/**
 	 * Settings constructor.
@@ -157,7 +159,7 @@ class Settings implements SettingsInterface {
 	 * @return array
 	 */
 	public function get_config_params(): array {
-		return (array) ( json_decode( $this->get( 'config_params' ), true ) ?: [] );
+		return Utils::json_decode_arr( $this->get( 'config_params' ) );
 	}
 
 	/**
@@ -171,7 +173,7 @@ class Settings implements SettingsInterface {
 		if (
 			$this->is_on( 'custom_themes' ) &&
 			$this->is_pro_or_general() &&
-			$this->is( 'mode', 'live' )
+			General::MODE_LIVE === $this->get_mode()
 		) {
 			$bg = $this->get_config_params()['theme']['component']['checkbox']['main']['fill'] ?? $bg;
 		}
@@ -284,15 +286,15 @@ class Settings implements SettingsInterface {
 				break;
 			case General::MODE_TEST_PUBLISHER:
 				$site_key   = General::MODE_TEST_PUBLISHER_SITE_KEY;
-				$secret_key = '0' . 'x' . '0000000000000000000000000000000000000000';
+				$secret_key = General::MODE_TEST_SECRET_KEY;
 				break;
 			case General::MODE_TEST_ENTERPRISE_SAFE_END_USER:
 				$site_key   = General::MODE_TEST_ENTERPRISE_SAFE_END_USER_SITE_KEY;
-				$secret_key = '0' . 'x' . '0000000000000000000000000000000000000000';
+				$secret_key = General::MODE_TEST_SECRET_KEY;
 				break;
 			case General::MODE_TEST_ENTERPRISE_BOT_DETECTED:
 				$site_key   = General::MODE_TEST_ENTERPRISE_BOT_DETECTED_SITE_KEY;
-				$secret_key = '0' . 'x' . '0000000000000000000000000000000000000000';
+				$secret_key = General::MODE_TEST_SECRET_KEY;
 				break;
 			default:
 				$site_key   = '';

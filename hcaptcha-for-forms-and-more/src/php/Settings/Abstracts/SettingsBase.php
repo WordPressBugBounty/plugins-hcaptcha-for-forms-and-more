@@ -7,6 +7,8 @@
 
 namespace KAGG\Settings\Abstracts;
 
+use HCaptcha\Helpers\HCaptcha;
+
 /**
  * Class SettingsBase
  *
@@ -61,57 +63,57 @@ abstract class SettingsBase {
 	 *
 	 * @var array|null
 	 */
-	protected $form_fields;
+	protected ?array $form_fields = null;
 
 	/**
 	 * Plugin options.
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	protected $settings;
+	protected ?array $settings = null;
 
 	/**
 	 * Tabs of this settings page.
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	protected $tabs;
+	protected ?array $tabs = null;
 
 	/**
 	 * Suffix for minified files.
 	 *
 	 * @var string
 	 */
-	protected $min_suffix;
+	protected string $min_suffix = '';
 
 	/**
 	 * Fields and their print methods.
 	 *
 	 * @var array
 	 */
-	protected $fields;
+	protected array $fields = [];
 
 	/**
 	 * Parent slug.
 	 * By default, add menu pages to Options menu.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	protected $parent_slug;
+	protected ?string $parent_slug = null;
 
 	/**
 	 * Mode of the settings page, e.g. 'pages' or 'tabs'.
 	 *
 	 * @var string
 	 */
-	protected $admin_mode = self::MODE_PAGES;
+	protected string $admin_mode = self::MODE_PAGES;
 
 	/**
 	 * Position of the menu.
 	 *
 	 * @var float
 	 */
-	protected $position;
+	protected float $position = 0.0;
 
 	/**
 	 * Get an option group.
@@ -272,6 +274,7 @@ abstract class SettingsBase {
 	protected function init_hooks(): void {
 		add_action( 'admin_enqueue_scripts', [ $this, 'base_admin_enqueue_scripts' ] );
 		add_action( 'admin_page_access_denied', [ $this, 'base_admin_page_access_denied' ] );
+		add_filter( 'script_loader_tag', [ $this, 'add_type_module' ], 10, 3 );
 
 		if ( $this->is_main_menu_page() ) {
 			add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
@@ -413,13 +416,13 @@ abstract class SettingsBase {
 	 */
 	protected function init_settings(): void {
 		if ( $this->is_network_wide() ) {
-			$this->settings = get_site_option( $this->option_name(), null );
+			$settings = get_site_option( $this->option_name(), null );
 		} else {
-			$this->settings = get_option( $this->option_name(), null );
+			$settings = get_option( $this->option_name(), null );
 		}
 
-		$settings_exist                       = is_array( $this->settings );
-		$this->settings                       = (array) $this->settings;
+		$settings_exist                       = is_array( $settings );
+		$this->settings                       = (array) $settings;
 		$form_fields                          = $this->form_fields();
 		$network_wide_setting                 = array_key_exists( self::NETWORK_WIDE, $this->settings )
 			? $this->settings[ self::NETWORK_WIDE ]
@@ -445,9 +448,9 @@ abstract class SettingsBase {
 	/**
 	 * Get all form fields.
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	protected function all_form_fields() {
+	protected function all_form_fields(): array {
 		$form_fields[] = $this->form_fields();
 		$tabs          = $this->tabs ?: [];
 
@@ -618,6 +621,26 @@ abstract class SettingsBase {
 	}
 
 	/**
+	 * Add type="module" attribute to script tag.
+	 *
+	 * @param string|mixed $tag    Script tag.
+	 * @param string       $handle Script handle.
+	 * @param string       $src    Script source.
+	 *
+	 * @return string
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function add_type_module( $tag, string $handle, string $src ): string {
+		$tag = (string) $tag;
+
+		if ( ( static::PREFIX . '-' . self::HANDLE ) !== $handle ) {
+			return $tag;
+		}
+
+		return HCaptcha::add_type_module( $tag );
+	}
+
+	/**
 	 * Filter denied access to the settings page.
 	 * It is necessary when switching the network-wide option.
 	 *
@@ -748,11 +771,11 @@ abstract class SettingsBase {
 	/**
 	 * Get tab url.
 	 *
-	 * @param SettingsBase $tab Tabs of the current settings page.
+	 * @param self $tab Tabs of the current settings page.
 	 *
 	 * @return string
 	 */
-	public function tab_url( SettingsBase $tab ): string {
+	public function tab_url( self $tab ): string {
 		$url = is_multisite() && $this->is_network_wide() ?
 			network_admin_url( 'admin.php?page=' . $tab->option_page() ) :
 			menu_page_url( $tab->option_page(), false );
@@ -767,11 +790,11 @@ abstract class SettingsBase {
 	/**
 	 * Show a tab link.
 	 *
-	 * @param SettingsBase $tab Tabs of the current settings page.
+	 * @param self $tab Tabs of the current settings page.
 	 *
 	 * @return void
 	 */
-	private function tab_link( SettingsBase $tab ): void {
+	private function tab_link( self $tab ): void {
 		$url    = $this->tab_url( $tab );
 		$active = $tab->is_tab_active( $tab ) ? ' active' : '';
 		$class  = static::PREFIX . '-settings-tab' . $active;
@@ -786,11 +809,11 @@ abstract class SettingsBase {
 	/**
 	 * Check if the tab is active.
 	 *
-	 * @param SettingsBase $tab Tab of the current settings page.
+	 * @param self $tab Tab of the current settings page.
 	 *
 	 * @return bool
 	 */
-	protected function is_tab_active( SettingsBase $tab ): bool {
+	protected function is_tab_active( self $tab ): bool {
 		switch ( $this->admin_mode ) {
 			case self::MODE_PAGES:
 				$current_page_name = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
@@ -875,9 +898,9 @@ abstract class SettingsBase {
 	/**
 	 * Get an active tab.
 	 *
-	 * @return SettingsBase
+	 * @return self
 	 */
-	public function get_active_tab(): SettingsBase {
+	public function get_active_tab(): self {
 		if ( ! empty( $this->tabs ) ) {
 			foreach ( $this->tabs as $tab ) {
 				if ( $this->is_tab_active( $tab ) ) {
@@ -910,7 +933,7 @@ abstract class SettingsBase {
 		 *
 		 * @param array $fields Fields.
 		 */
-		$this->fields = apply_filters( 'kagg_settings_fields', $this->fields );
+		$this->fields = (array) apply_filters( 'kagg_settings_fields', $this->fields );
 
 		foreach ( $this->form_fields as $key => $field ) {
 			$field['field_id'] = $key;
@@ -969,13 +992,15 @@ abstract class SettingsBase {
 	 * @return void
 	 */
 	protected function print_text_field( array $arguments ): void {
-		$value        = $this->get( $arguments['field_id'] );
-		$autocomplete = '';
-		$lp_ignore    = '';
+		$value           = $this->get( $arguments['field_id'] );
+		$autocomplete    = '';
+		$lp_ignore       = '';
+		$one_pass_ignore = '';
 
 		if ( 'password' === $arguments['type'] ) {
-			$autocomplete = 'new-password';
-			$lp_ignore    = 'true';
+			$autocomplete    = 'new-password';
+			$lp_ignore       = 'true';
+			$one_pass_ignore = 'true';
 		}
 
 		$autocomplete = $arguments['autocomplete'] ?? $autocomplete;
@@ -983,7 +1008,7 @@ abstract class SettingsBase {
 
 		printf(
 			'<input %1$s name="%2$s[%3$s]" id="%3$s" type="%4$s"' .
-			' placeholder="%5$s" value="%6$s" autocomplete="%7$s" data-lpignore="%8$s" class="regular-text" />',
+			' placeholder="%5$s" value="%6$s" autocomplete="%7$s" data-lpignore="%8$s" data-1p-ignore="%9$s" class="regular-text" />',
 			disabled( $arguments['disabled'], true, false ),
 			esc_html( $this->option_name() ),
 			esc_attr( $arguments['field_id'] ),
@@ -991,7 +1016,8 @@ abstract class SettingsBase {
 			esc_attr( $arguments['placeholder'] ),
 			esc_html( $value ),
 			esc_attr( $autocomplete ),
-			esc_attr( $lp_ignore )
+			esc_attr( $lp_ignore ),
+			esc_attr( $one_pass_ignore )
 		);
 	}
 
@@ -1577,6 +1603,7 @@ abstract class SettingsBase {
 	 * @return void
 	 */
 	public function load_plugin_textdomain(): void {
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 		load_plugin_textdomain(
 			$this->text_domain(),
 			false,
@@ -1591,7 +1618,7 @@ abstract class SettingsBase {
 	 *
 	 * @return bool
 	 */
-	protected function is_options_screen( $ids = 'options' ): bool {
+	public function is_options_screen( $ids = 'options' ): bool {
 		$ids = (array) $ids;
 
 		if ( ! function_exists( 'get_current_screen' ) ) {

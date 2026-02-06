@@ -33,16 +33,6 @@ use HCaptcha\Main;
 class HCaptchaHandler {
 
 	/**
-	 * Site Key option name.
-	 */
-	private const OPTION_NAME_SITE_KEY = 'site_key';
-
-	/**
-	 * Secret Key option name.
-	 */
-	private const OPTION_NAME_SECRET_KEY = 'secret_key';
-
-	/**
 	 * Theme option name.
 	 */
 	private const OPTION_NAME_THEME = 'theme';
@@ -117,6 +107,10 @@ class HCaptchaHandler {
 	 * @return void
 	 */
 	public function init(): void {
+		if ( ! class_exists( FormsModule::class, false ) ) {
+			return;
+		}
+
 		// Register or re-register hCaptcha component.
 		FormsModule::instance()->add_component( self::FIELD_ID, $this );
 
@@ -251,19 +245,19 @@ class HCaptchaHandler {
 	/**
 	 * Get a site key.
 	 *
-	 * @return array|string
+	 * @return string
 	 */
-	public static function get_site_key() {
-		return hcaptcha()->settings()->get( self::OPTION_NAME_SITE_KEY );
+	public static function get_site_key(): string {
+		return hcaptcha()->settings()->get_site_key();
 	}
 
 	/**
 	 * Get a secret key.
 	 *
-	 * @return array|string
+	 * @return string
 	 */
-	public static function get_secret_key() {
-		return hcaptcha()->settings()->get( self::OPTION_NAME_SECRET_KEY );
+	public static function get_secret_key(): string {
+		return hcaptcha()->settings()->get_secret_key();
 	}
 
 	/**
@@ -370,13 +364,7 @@ class HCaptchaHandler {
 
 		$field = current( $fields );
 
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$hcaptcha_response = isset( $_POST['h-captcha-response'] ) ?
-			filter_var( wp_unslash( $_POST['h-captcha-response'] ), FILTER_SANITIZE_FULL_SPECIAL_CHARS ) :
-			'';
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
-
-		$result = API::verify_request( $hcaptcha_response );
+		$result = API::verify( $this->get_entry( $record ) );
 
 		if ( null !== $result ) {
 			$ajax_handler->add_error( $field['id'], $result );
@@ -566,5 +554,36 @@ class HCaptchaHandler {
 ';
 
 		HCaptcha::css_display( $css );
+	}
+
+	/**
+	 * Get entry.
+	 *
+	 * @param Form_Record $record Record.
+	 *
+	 * @return array
+	 */
+	private function get_entry( Form_Record $record ): array {
+		$form_settings = $record->get( 'form_settings' );
+		$form_id       = (int) ( $form_settings['form_post_id'] ?? 0 );
+		$post          = get_post( $form_id );
+		$sent_data     = $record->get( 'sent_data' );
+		$entry         = [
+			'form_date_gmt' => $post->post_modified_gmt ?? null,
+			'data'          => $sent_data,
+		];
+
+		$fields = $record->get( 'fields' );
+
+		foreach ( $fields as $field ) {
+			$type = $field['type'];
+			$id   = $field['id'];
+
+			if ( 'email' === $type ) {
+				$entry['data'][ $id ] = $sent_data[ $id ];
+			}
+		}
+
+		return $entry;
 	}
 }

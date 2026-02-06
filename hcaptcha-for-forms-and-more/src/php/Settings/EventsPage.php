@@ -39,21 +39,21 @@ class EventsPage extends ListPageBase {
 	 *
 	 * @var EventsTable
 	 */
-	protected $list_table;
+	protected EventsTable $list_table;
 
 	/**
 	 * Succeed events.
 	 *
 	 * @var array
 	 */
-	protected $succeed;
+	protected array $succeed = [];
 
 	/**
 	 * Failed events.
 	 *
 	 * @var array
 	 */
-	protected $failed;
+	protected array $failed = [];
 
 	/**
 	 * Get page title.
@@ -256,7 +256,7 @@ class EventsPage extends ListPageBase {
 		$table_name = $wpdb->prefix . Events::TABLE_NAME;
 		$in         = DB::prepare_in( $ids, '%d' );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		$result = $wpdb->query(
 			$wpdb->prepare(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared

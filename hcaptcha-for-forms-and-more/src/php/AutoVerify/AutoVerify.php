@@ -37,7 +37,7 @@ class AutoVerify {
 	 *
 	 * @var array
 	 */
-	protected $registry = [];
+	protected array $registry = [];
 
 	/**
 	 * Init class.
@@ -390,7 +390,7 @@ class AutoVerify {
 			self::TRANSIENT,
 			$registered_forms,
 			/** This filter is documented in wp-includes/pluggable.php. */
-			apply_filters( 'nonce_life', constant( 'DAY_IN_SECONDS' ) )
+			apply_filters( 'nonce_life', constant( 'DAY_IN_SECONDS' ) ) // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		);
 	}
 

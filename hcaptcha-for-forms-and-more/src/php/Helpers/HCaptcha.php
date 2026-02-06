@@ -14,6 +14,7 @@ namespace HCaptcha\Helpers;
 
 use HCaptcha\Helpers\Minify\CSS;
 use HCaptcha\Helpers\Minify\JS;
+use HCaptcha\Settings\Integrations;
 use WP_Error;
 
 /**
@@ -36,7 +37,7 @@ class HCaptcha {
 	 *
 	 * @var array
 	 */
-	private static $default_id = [
+	private static array $default_id = [
 		'source'  => [],
 		'form_id' => 0,
 	];
@@ -64,8 +65,8 @@ class HCaptcha {
 		$settings          = hcaptcha()->settings();
 		$hcaptcha_site_key = $settings->get_site_key();
 		$hcaptcha_force    = $settings->is_on( 'force' );
-		$hcaptcha_theme    = $settings->get_theme();
-		$hcaptcha_size     = $settings->get( 'size' );
+		$hcaptcha_theme    = $settings->get_theme() ?: 'light';
+		$hcaptcha_size     = $settings->get( 'size' ) ?: 'normal';
 
 		$args = wp_parse_args(
 			$args,
@@ -301,7 +302,7 @@ class HCaptcha {
 
 		$id = wp_parse_args(
 		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
-			(array) json_decode( base64_decode( $encoded_id ), true ),
+			Utils::json_decode_arr( base64_decode( $encoded_id ) ),
 			self::$default_id
 		);
 
@@ -437,14 +438,84 @@ class HCaptcha {
 	public static function get_class_source( string $class_name ): array {
 		foreach ( hcaptcha()->modules as $module ) {
 			if ( in_array( $class_name, (array) $module[2], true ) ) {
-				$source = $module[1];
-
-				// For WP Core (empty $source string), return option value.
-				return '' === $source ? [ 'WordPress' ] : (array) $source;
+				// For WP Core (empty $source string), return WP name.
+				return self::formatted_source( $module[1] );
 			}
 		}
 
 		return [];
+	}
+
+	/**
+	 * Get a source from status.
+	 *
+	 * @param string $status Status.
+	 *
+	 * @return array
+	 */
+	public static function get_status_source( string $status ): array {
+		foreach ( hcaptcha()->modules as $module ) {
+			if ( $module[0][0] === $status ) {
+				// For WP Core (empty $source string), return WP name.
+				return self::formatted_source( $module[1] );
+			}
+		}
+
+		return [];
+	}
+
+	/**
+	 * Format source.
+	 *
+	 * @param string|array $source Source name or array of source names.
+	 *
+	 * @return array
+	 */
+	private static function formatted_source( $source ): array {
+		return '' === $source ? [ 'WordPress' ] : (array) $source;
+	}
+
+	/**
+	 * Get the source name.
+	 *
+	 * Source is written in the database like `["fluentformpro\/fluentformpro.php","fluentform\/fluentform.php"]`.
+	 * This method converts it to the source name like `Fluent Forms`.
+	 *
+	 * @param string $source Source name or empty string if not found.
+	 *
+	 * @return string
+	 */
+	public static function get_source_name( string $source ): string {
+		$source_arr = Utils::json_decode_arr( $source );
+
+		if ( ! $source_arr ) {
+			return '';
+		}
+
+		foreach ( hcaptcha()->modules as $module ) {
+			$module_source = (array) ( '' === $module[1] ? 'WordPress' : $module[1] );
+
+			if ( array_intersect( $source_arr, $module_source ) ) {
+				$status = $module[0][0];
+
+				/**
+				 * Integrations class instance.
+				 *
+				 * @var $integrations Integrations
+				 */
+				$integrations = hcaptcha()->settings()->get_tab( Integrations::class );
+
+				if ( ! $integrations ) {
+					// @CodeCoverageIgnoreStart
+					return implode( ',', $module_source );
+					// @CodeCoverageIgnoreEnd
+				}
+
+				return $integrations->get_form_fields()[ $status ]['label'] ?? '';
+			}
+		}
+
+		return implode( ',', $source_arr );
 	}
 
 	/**
@@ -1005,7 +1076,7 @@ class HCaptcha {
 
 		$id = wp_parse_args(
 		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
-			(array) json_decode( base64_decode( $encoded_id ), true ),
+			Utils::json_decode_arr( base64_decode( $encoded_id ) ),
 			self::$default_id
 		);
 
