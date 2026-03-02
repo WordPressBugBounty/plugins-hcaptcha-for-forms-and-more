@@ -9,4 +9,5 @@ return array(
     'KAGG\\Settings\\Abstracts\\' => array($baseDir . '/src/php/Settings/Abstracts'),
     'HCaptcha\\Scoper\\' => array($baseDir . '/.php-scoper/src'),
     'HCaptcha\\' => array($baseDir . '/src/php'),
+    'Composer\\CaBundle\\' => array($vendorDir . '/composer/ca-bundle/src'),
 );

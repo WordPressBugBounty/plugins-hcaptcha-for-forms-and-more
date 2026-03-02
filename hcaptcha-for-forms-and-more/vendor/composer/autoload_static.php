@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit081f25dd00888e3555ef62046d07b7df
+class ComposerStaticInitfd2006aff622979edf082b8ddaf706a3
 {
     public static $prefixLengthsPsr4 = array (
         'K' =>
@@ -15,6 +15,10 @@ class ComposerStaticInit081f25dd00888e3555ef62046d07b7df
         array (
             'HCaptcha\\Scoper\\' => 16,
             'HCaptcha\\' => 9,
+        ),
+        'C' =>
+        array (
+            'Composer\\CaBundle\\' => 18,
         ),
     );
 
@@ -31,9 +35,14 @@ class ComposerStaticInit081f25dd00888e3555ef62046d07b7df
         array (
             0 => __DIR__ . '/../..' . '/src/php',
         ),
+        'Composer\\CaBundle\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/composer/ca-bundle/src',
+        ),
     );
 
     public static $classMap = array (
+        'Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'HCaptcha\\ACFE\\Form' => __DIR__ . '/../..' . '/src/php/ACFE/Form.php',
         'HCaptcha\\Abilities\\Abilities' => __DIR__ . '/../..' . '/src/php/Abilities/Abilities.php',
@@ -44,6 +53,7 @@ class ComposerStaticInit081f25dd00888e3555ef62046d07b7df
         'HCaptcha\\Admin\\Events\\EventsTable' => __DIR__ . '/../..' . '/src/php/Admin/Events/EventsTable.php',
         'HCaptcha\\Admin\\Events\\FormsTable' => __DIR__ . '/../..' . '/src/php/Admin/Events/FormsTable.php',
         'HCaptcha\\Admin\\Events\\TableBase' => __DIR__ . '/../..' . '/src/php/Admin/Events/TableBase.php',
+        'HCaptcha\\Admin\\MaxMindDb' => __DIR__ . '/../..' . '/src/php/Admin/MaxMindDb.php',
         'HCaptcha\\Admin\\Notifications' => __DIR__ . '/../..' . '/src/php/Admin/Notifications.php',
         'HCaptcha\\Admin\\NotificationsBase' => __DIR__ . '/../..' . '/src/php/Admin/NotificationsBase.php',
         'HCaptcha\\Admin\\OnboardingWizard' => __DIR__ . '/../..' . '/src/php/Admin/OnboardingWizard.php',
@@ -207,6 +217,37 @@ class ComposerStaticInit081f25dd00888e3555ef62046d07b7df
         'HCaptcha\\UsersWP\\ForgotPassword' => __DIR__ . '/../..' . '/src/php/UsersWP/ForgotPassword.php',
         'HCaptcha\\UsersWP\\Login' => __DIR__ . '/../..' . '/src/php/UsersWP/Login.php',
         'HCaptcha\\UsersWP\\Register' => __DIR__ . '/../..' . '/src/php/UsersWP/Register.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Database\\Reader' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Database/Reader.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Exception\\AddressNotFoundException' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Exception/AddressNotFoundException.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Exception\\AuthenticationException' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Exception/AuthenticationException.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Exception\\GeoIp2Exception' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Exception/GeoIp2Exception.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Exception\\HttpException' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Exception/HttpException.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Exception\\InvalidRequestException' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Exception/InvalidRequestException.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Exception\\OutOfQueriesException' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Exception/OutOfQueriesException.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\AbstractModel' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/AbstractModel.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\AnonymousIp' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/AnonymousIp.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\Asn' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/Asn.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\City' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/City.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\ConnectionType' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/ConnectionType.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\Country' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/Country.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\Domain' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/Domain.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\Enterprise' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/Enterprise.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\Insights' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/Insights.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Model\\Isp' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Model/Isp.php',
+        'HCaptcha\\Vendors\\GeoIp2\\ProviderInterface' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/ProviderInterface.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\AbstractPlaceRecord' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/AbstractPlaceRecord.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\AbstractRecord' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/AbstractRecord.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\City' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/City.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\Continent' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/Continent.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\Country' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/Country.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\Location' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/Location.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\MaxMind' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/MaxMind.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\Postal' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/Postal.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\RepresentedCountry' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/RepresentedCountry.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\Subdivision' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/Subdivision.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Record\\Traits' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Record/Traits.php',
+        'HCaptcha\\Vendors\\GeoIp2\\Util' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/Util.php',
+        'HCaptcha\\Vendors\\GeoIp2\\WebService\\Client' => __DIR__ . '/../..' . '/vendors/geoip2/geoip2/src/WebService/Client.php',
         'HCaptcha\\Vendors\\MatthiasMullie\\Minify\\CSS' => __DIR__ . '/../..' . '/vendors/matthiasmullie/minify/src/CSS.php',
         'HCaptcha\\Vendors\\MatthiasMullie\\Minify\\Exception' => __DIR__ . '/../..' . '/vendors/matthiasmullie/minify/src/Exception.php',
         'HCaptcha\\Vendors\\MatthiasMullie\\Minify\\Exceptions\\BasicException' => __DIR__ . '/../..' . '/vendors/matthiasmullie/minify/src/Exceptions/BasicException.php',
@@ -218,8 +259,26 @@ class ComposerStaticInit081f25dd00888e3555ef62046d07b7df
         'HCaptcha\\Vendors\\MatthiasMullie\\PathConverter\\Converter' => __DIR__ . '/../..' . '/vendors/matthiasmullie/path-converter/src/Converter.php',
         'HCaptcha\\Vendors\\MatthiasMullie\\PathConverter\\ConverterInterface' => __DIR__ . '/../..' . '/vendors/matthiasmullie/path-converter/src/ConverterInterface.php',
         'HCaptcha\\Vendors\\MatthiasMullie\\PathConverter\\NoConverter' => __DIR__ . '/../..' . '/vendors/matthiasmullie/path-converter/src/NoConverter.php',
+        'HCaptcha\\Vendors\\MaxMind\\Db\\Reader' => __DIR__ . '/../..' . '/vendors/maxmind-db/reader/src/MaxMind/Db/Reader.php',
+        'HCaptcha\\Vendors\\MaxMind\\Db\\Reader\\Decoder' => __DIR__ . '/../..' . '/vendors/maxmind-db/reader/src/MaxMind/Db/Reader/Decoder.php',
+        'HCaptcha\\Vendors\\MaxMind\\Db\\Reader\\InvalidDatabaseException' => __DIR__ . '/../..' . '/vendors/maxmind-db/reader/src/MaxMind/Db/Reader/InvalidDatabaseException.php',
+        'HCaptcha\\Vendors\\MaxMind\\Db\\Reader\\Metadata' => __DIR__ . '/../..' . '/vendors/maxmind-db/reader/src/MaxMind/Db/Reader/Metadata.php',
+        'HCaptcha\\Vendors\\MaxMind\\Db\\Reader\\Util' => __DIR__ . '/../..' . '/vendors/maxmind-db/reader/src/MaxMind/Db/Reader/Util.php',
+        'HCaptcha\\Vendors\\MaxMind\\Exception\\AuthenticationException' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/Exception/AuthenticationException.php',
+        'HCaptcha\\Vendors\\MaxMind\\Exception\\HttpException' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/Exception/HttpException.php',
+        'HCaptcha\\Vendors\\MaxMind\\Exception\\InsufficientFundsException' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/Exception/InsufficientFundsException.php',
+        'HCaptcha\\Vendors\\MaxMind\\Exception\\InvalidInputException' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/Exception/InvalidInputException.php',
+        'HCaptcha\\Vendors\\MaxMind\\Exception\\InvalidRequestException' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/Exception/InvalidRequestException.php',
+        'HCaptcha\\Vendors\\MaxMind\\Exception\\IpAddressNotFoundException' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/Exception/IpAddressNotFoundException.php',
+        'HCaptcha\\Vendors\\MaxMind\\Exception\\PermissionRequiredException' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/Exception/PermissionRequiredException.php',
+        'HCaptcha\\Vendors\\MaxMind\\Exception\\WebServiceException' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/Exception/WebServiceException.php',
+        'HCaptcha\\Vendors\\MaxMind\\WebService\\Client' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/WebService/Client.php',
+        'HCaptcha\\Vendors\\MaxMind\\WebService\\Http\\CurlRequest' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/WebService/Http/CurlRequest.php',
+        'HCaptcha\\Vendors\\MaxMind\\WebService\\Http\\Request' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/WebService/Http/Request.php',
+        'HCaptcha\\Vendors\\MaxMind\\WebService\\Http\\RequestFactory' => __DIR__ . '/../..' . '/vendors/maxmind/web-service-common/src/WebService/Http/RequestFactory.php',
         'HCaptcha\\WCGermanized\\ReturnRequest' => __DIR__ . '/../..' . '/src/php/WCGermanized/ReturnRequest.php',
         'HCaptcha\\WCWishlists\\CreateList' => __DIR__ . '/../..' . '/src/php/WCWishlists/CreateList.php',
+        'HCaptcha\\WC\\AddPaymentMethod' => __DIR__ . '/../..' . '/src/php/WC/AddPaymentMethod.php',
         'HCaptcha\\WC\\Checkout' => __DIR__ . '/../..' . '/src/php/WC/Checkout.php',
         'HCaptcha\\WC\\Login' => __DIR__ . '/../..' . '/src/php/WC/Login.php',
         'HCaptcha\\WC\\LostPassword' => __DIR__ . '/../..' . '/src/php/WC/LostPassword.php',
@@ -249,9 +308,9 @@ class ComposerStaticInit081f25dd00888e3555ef62046d07b7df
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit081f25dd00888e3555ef62046d07b7df::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit081f25dd00888e3555ef62046d07b7df::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit081f25dd00888e3555ef62046d07b7df::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitfd2006aff622979edf082b8ddaf706a3::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitfd2006aff622979edf082b8ddaf706a3::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitfd2006aff622979edf082b8ddaf706a3::$classMap;
 
         }, null, ClassLoader::class);
     }
