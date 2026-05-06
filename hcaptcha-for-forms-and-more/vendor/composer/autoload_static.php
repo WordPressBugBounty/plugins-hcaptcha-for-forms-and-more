@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitfd2006aff622979edf082b8ddaf706a3
+class ComposerStaticInit387a76ba183b4a13726b37f021ab186e
 {
     public static $prefixLengthsPsr4 = array (
         'K' =>
@@ -87,7 +87,6 @@ class ComposerStaticInitfd2006aff622979edf082b8ddaf706a3
         'HCaptcha\\Brizy\\Form' => __DIR__ . '/../..' . '/src/php/Brizy/Form.php',
         'HCaptcha\\BuddyPress\\CreateGroup' => __DIR__ . '/../..' . '/src/php/BuddyPress/CreateGroup.php',
         'HCaptcha\\BuddyPress\\Register' => __DIR__ . '/../..' . '/src/php/BuddyPress/Register.php',
-        'HCaptcha\\CACSP\\Compatibility' => __DIR__ . '/../..' . '/src/php/CACSP/Compatibility.php',
         'HCaptcha\\CF7\\Admin' => __DIR__ . '/../..' . '/src/php/CF7/Admin.php',
         'HCaptcha\\CF7\\Base' => __DIR__ . '/../..' . '/src/php/CF7/Base.php',
         'HCaptcha\\CF7\\CF7' => __DIR__ . '/../..' . '/src/php/CF7/CF7.php',
@@ -146,9 +145,9 @@ class ComposerStaticInitfd2006aff622979edf082b8ddaf706a3
         'HCaptcha\\IcegramExpress\\Form' => __DIR__ . '/../..' . '/src/php/IcegramExpress/Form.php',
         'HCaptcha\\Jetpack\\Base' => __DIR__ . '/../..' . '/src/php/Jetpack/Base.php',
         'HCaptcha\\Jetpack\\Form' => __DIR__ . '/../..' . '/src/php/Jetpack/Form.php',
-        'HCaptcha\\Kadence\\AdvancedBlockParser' => __DIR__ . '/../..' . '/src/php/Kadence/AdvancedBlockParser.php',
         'HCaptcha\\Kadence\\AdvancedForm' => __DIR__ . '/../..' . '/src/php/Kadence/AdvancedForm.php',
         'HCaptcha\\Kadence\\Base' => __DIR__ . '/../..' . '/src/php/Kadence/Base.php',
+        'HCaptcha\\Kadence\\BlockParser' => __DIR__ . '/../..' . '/src/php/Kadence/BlockParser.php',
         'HCaptcha\\Kadence\\Form' => __DIR__ . '/../..' . '/src/php/Kadence/Form.php',
         'HCaptcha\\LearnDash\\Login' => __DIR__ . '/../..' . '/src/php/LearnDash/Login.php',
         'HCaptcha\\LearnDash\\LostPassword' => __DIR__ . '/../..' . '/src/php/LearnDash/LostPassword.php',
@@ -165,14 +164,28 @@ class ComposerStaticInitfd2006aff622979edf082b8ddaf706a3
         'HCaptcha\\MemberPress\\Login' => __DIR__ . '/../..' . '/src/php/MemberPress/Login.php',
         'HCaptcha\\MemberPress\\Register' => __DIR__ . '/../..' . '/src/php/MemberPress/Register.php',
         'HCaptcha\\MigrationWizard\\DetectionResult' => __DIR__ . '/../..' . '/src/php/MigrationWizard/DetectionResult.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\ACFEDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/ACFEDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\AbstractDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/AbstractDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\AdvancedGoogleRecaptchaDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/AdvancedGoogleRecaptchaDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\AdvancedNoCaptchaDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/AdvancedNoCaptchaDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\BeaverBuilderDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/BeaverBuilderDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\BrevoDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/BrevoDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\CF7RecaptchaDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/CF7RecaptchaDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\CoBlocksDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/CoBlocksDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\ContactForm7CaptchaDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/ContactForm7CaptchaDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\DownloadManagerDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/DownloadManagerDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\ElementorProDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/ElementorProDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\FluentFormsDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/FluentFormsDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\FormidableFormsDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/FormidableFormsDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\ForminatorDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/ForminatorDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\GiveWPDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/GiveWPDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\GoogleCaptchaDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/GoogleCaptchaDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\GravityFormsRecaptchaDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/GravityFormsRecaptchaDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\KadenceDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/KadenceDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\MailPoetDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/MailPoetDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\NinjaFormsDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/NinjaFormsDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\OtterDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/OtterDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\PaidMembershipProDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/PaidMembershipProDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\SimpleTurnstileDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/SimpleTurnstileDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\SpectraDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/SpectraDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\WPFormsRecaptchaDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/WPFormsRecaptchaDetector.php',
@@ -328,9 +341,9 @@ class ComposerStaticInitfd2006aff622979edf082b8ddaf706a3
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitfd2006aff622979edf082b8ddaf706a3::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitfd2006aff622979edf082b8ddaf706a3::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitfd2006aff622979edf082b8ddaf706a3::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit387a76ba183b4a13726b37f021ab186e::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit387a76ba183b4a13726b37f021ab186e::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit387a76ba183b4a13726b37f021ab186e::$classMap;
 
         }, null, ClassLoader::class);
     }
