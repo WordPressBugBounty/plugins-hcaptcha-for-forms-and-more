@@ -24,6 +24,7 @@ return array(
     'HCaptcha\\Admin\\OnboardingWizard' => $baseDir . '/src/php/Admin/OnboardingWizard.php',
     'HCaptcha\\Admin\\PluginStats' => $baseDir . '/src/php/Admin/PluginStats.php',
     'HCaptcha\\Admin\\Privacy' => $baseDir . '/src/php/Admin/Privacy.php',
+    'HCaptcha\\Admin\\SupportModal' => $baseDir . '/src/php/Admin/SupportModal.php',
     'HCaptcha\\Admin\\WhatsNew' => $baseDir . '/src/php/Admin/WhatsNew.php',
     'HCaptcha\\Affiliates\\Login' => $baseDir . '/src/php/Affiliates/Login.php',
     'HCaptcha\\Affiliates\\Register' => $baseDir . '/src/php/Affiliates/Register.php',

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit387a76ba183b4a13726b37f021ab186e
+class ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c
 {
     public static $prefixLengthsPsr4 = array (
         'K' =>
@@ -60,6 +60,7 @@ class ComposerStaticInit387a76ba183b4a13726b37f021ab186e
         'HCaptcha\\Admin\\OnboardingWizard' => __DIR__ . '/../..' . '/src/php/Admin/OnboardingWizard.php',
         'HCaptcha\\Admin\\PluginStats' => __DIR__ . '/../..' . '/src/php/Admin/PluginStats.php',
         'HCaptcha\\Admin\\Privacy' => __DIR__ . '/../..' . '/src/php/Admin/Privacy.php',
+        'HCaptcha\\Admin\\SupportModal' => __DIR__ . '/../..' . '/src/php/Admin/SupportModal.php',
         'HCaptcha\\Admin\\WhatsNew' => __DIR__ . '/../..' . '/src/php/Admin/WhatsNew.php',
         'HCaptcha\\Affiliates\\Login' => __DIR__ . '/../..' . '/src/php/Affiliates/Login.php',
         'HCaptcha\\Affiliates\\Register' => __DIR__ . '/../..' . '/src/php/Affiliates/Register.php',
@@ -344,9 +345,9 @@ class ComposerStaticInit387a76ba183b4a13726b37f021ab186e
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit387a76ba183b4a13726b37f021ab186e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit387a76ba183b4a13726b37f021ab186e::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit387a76ba183b4a13726b37f021ab186e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c::$classMap;
 
         }, null, ClassLoader::class);
     }
