@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c
+class ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293
 {
     public static $prefixLengthsPsr4 = array (
         'K' =>
@@ -50,6 +50,7 @@ class ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c
         'HCaptcha\\Abstracts\\LoginBase' => __DIR__ . '/../..' . '/src/php/Abstracts/LoginBase.php',
         'HCaptcha\\Abstracts\\LostPasswordBase' => __DIR__ . '/../..' . '/src/php/Abstracts/LostPasswordBase.php',
         'HCaptcha\\Admin\\AdminNotices' => __DIR__ . '/../..' . '/src/php/Admin/AdminNotices.php',
+        'HCaptcha\\Admin\\CommandPalette' => __DIR__ . '/../..' . '/src/php/Admin/CommandPalette.php',
         'HCaptcha\\Admin\\Events\\Events' => __DIR__ . '/../..' . '/src/php/Admin/Events/Events.php',
         'HCaptcha\\Admin\\Events\\EventsTable' => __DIR__ . '/../..' . '/src/php/Admin/Events/EventsTable.php',
         'HCaptcha\\Admin\\Events\\FormsTable' => __DIR__ . '/../..' . '/src/php/Admin/Events/FormsTable.php',
@@ -166,6 +167,7 @@ class ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c
         'HCaptcha\\Maintenance\\Login' => __DIR__ . '/../..' . '/src/php/Maintenance/Login.php',
         'HCaptcha\\MemberPress\\Login' => __DIR__ . '/../..' . '/src/php/MemberPress/Login.php',
         'HCaptcha\\MemberPress\\Register' => __DIR__ . '/../..' . '/src/php/MemberPress/Register.php',
+        'HCaptcha\\MetForm\\Form' => __DIR__ . '/../..' . '/src/php/MetForm/Form.php',
         'HCaptcha\\MigrationWizard\\DetectionResult' => __DIR__ . '/../..' . '/src/php/MigrationWizard/DetectionResult.php',
         'HCaptcha\\MigrationWizard\\Detectors\\ACFEDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/ACFEDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\AbstractDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/AbstractDetector.php',
@@ -186,6 +188,7 @@ class ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c
         'HCaptcha\\MigrationWizard\\Detectors\\GravityFormsRecaptchaDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/GravityFormsRecaptchaDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\KadenceDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/KadenceDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\MailPoetDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/MailPoetDetector.php',
+        'HCaptcha\\MigrationWizard\\Detectors\\MetFormDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/MetFormDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\NinjaFormsDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/NinjaFormsDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\OtterDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/OtterDetector.php',
         'HCaptcha\\MigrationWizard\\Detectors\\PaidMembershipProDetector' => __DIR__ . '/../..' . '/src/php/MigrationWizard/Detectors/PaidMembershipProDetector.php',
@@ -345,9 +348,9 @@ class ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitb925a3bc294ee7572379cabc0aebfe7c::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293::$classMap;
 
         }, null, ClassLoader::class);
     }
