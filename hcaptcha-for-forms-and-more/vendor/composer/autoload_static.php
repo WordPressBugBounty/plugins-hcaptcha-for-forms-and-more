@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293
+class ComposerStaticInitd5a112a1365494f66af55cfbf900281f
 {
     public static $prefixLengthsPsr4 = array (
         'K' =>
@@ -47,8 +47,10 @@ class ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293
         'HCaptcha\\ACFE\\Form' => __DIR__ . '/../..' . '/src/php/ACFE/Form.php',
         'HCaptcha\\Abilities\\Abilities' => __DIR__ . '/../..' . '/src/php/Abilities/Abilities.php',
         'HCaptcha\\Abstracts\\CommentBase' => __DIR__ . '/../..' . '/src/php/Abstracts/CommentBase.php',
+        'HCaptcha\\Abstracts\\FormOwnerBase' => __DIR__ . '/../..' . '/src/php/Abstracts/FormOwnerBase.php',
         'HCaptcha\\Abstracts\\LoginBase' => __DIR__ . '/../..' . '/src/php/Abstracts/LoginBase.php',
         'HCaptcha\\Abstracts\\LostPasswordBase' => __DIR__ . '/../..' . '/src/php/Abstracts/LostPasswordBase.php',
+        'HCaptcha\\Abstracts\\RegisterBase' => __DIR__ . '/../..' . '/src/php/Abstracts/RegisterBase.php',
         'HCaptcha\\Admin\\AdminNotices' => __DIR__ . '/../..' . '/src/php/Admin/AdminNotices.php',
         'HCaptcha\\Admin\\CommandPalette' => __DIR__ . '/../..' . '/src/php/Admin/CommandPalette.php',
         'HCaptcha\\Admin\\Events\\Events' => __DIR__ . '/../..' . '/src/php/Admin/Events/Events.php',
@@ -348,9 +350,9 @@ class ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitf99cfa7ee0ce1e6a50ef57f8811a1293::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd5a112a1365494f66af55cfbf900281f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd5a112a1365494f66af55cfbf900281f::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitd5a112a1365494f66af55cfbf900281f::$classMap;
 
         }, null, ClassLoader::class);
     }

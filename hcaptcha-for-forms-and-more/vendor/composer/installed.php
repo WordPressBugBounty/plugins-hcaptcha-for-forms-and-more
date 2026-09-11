@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'hcaptcha/hcaptcha-wordpress-plugin',
-        'pretty_version' => '5.2.0',
-        'version' => '5.2.0.0',
-        'reference' => 'aa60979e32d49ff4316a1ae4766d3c47f6cc8d5e',
+        'pretty_version' => '5.3.0',
+        'version' => '5.3.0.0',
+        'reference' => '5de749e2abee442b8e6cc1371aad0c6b20ffbd27',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'composer/ca-bundle' => array(
-            'pretty_version' => '1.5.13',
-            'version' => '1.5.13.0',
-            'reference' => 'c008272789979f709f7fcb32c2ecf1d2db5e84e5',
+            'pretty_version' => '1.5.14',
+            'version' => '1.5.14.0',
+            'reference' => '0c8abba0634f637bd78c4e451981da368d403463',
             'type' => 'library',
             'install_path' => __DIR__ . '/./ca-bundle',
             'aliases' => array(),
@@ -29,9 +29,9 @@
             'dev_requirement' => false,
         ),
         'hcaptcha/hcaptcha-wordpress-plugin' => array(
-            'pretty_version' => '5.2.0',
-            'version' => '5.2.0.0',
-            'reference' => 'aa60979e32d49ff4316a1ae4766d3c47f6cc8d5e',
+            'pretty_version' => '5.3.0',
+            'version' => '5.3.0.0',
+            'reference' => '5de749e2abee442b8e6cc1371aad0c6b20ffbd27',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -56,9 +56,9 @@
             'dev_requirement' => false,
         ),
         'maxmind-db/reader' => array(
-            'pretty_version' => 'v1.13.1',
-            'version' => '1.13.1.0',
-            'reference' => '2194f58d0f024ce923e685cdf92af3daf9951908',
+            'pretty_version' => 'v1.14.0',
+            'version' => '1.14.0.0',
+            'reference' => 'f3c92f68b3bec42a9aa780368399e03dc6b91e89',
             'type' => 'library',
             'install_path' => __DIR__ . '/../maxmind-db/reader',
             'aliases' => array(),
